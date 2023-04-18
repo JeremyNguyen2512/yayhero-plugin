@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom'
-import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber } from 'antd';
+import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag } from 'antd';
 import { HERO_CLASS_LIST } from '../libtypes/heros.type';
 
 const AddHero = () => {
@@ -17,9 +17,27 @@ const AddHero = () => {
 
                         <Form.Item label="Class" name="hero_class"  rules={[{ required: true, message: 'Please pick an item!' }]} >
                         <Radio.Group>
-                            <Radio.Button value="a">item 1</Radio.Button>
-                            <Radio.Button value="b">item 2</Radio.Button>
-                            <Radio.Button value="c">item 3</Radio.Button>
+                            { 
+                                HERO_CLASS_LIST.map(item=>{
+                                    let color:string = '';
+                                    if(item === 'Warrior'){
+                                        color = "volcano"
+                                    }
+                                    if(item === 'Mage'){
+                                        color = "purple"
+                                    }
+                                    if(item === 'Rogue'){
+                                        color = "blue"
+                                    }
+                                    if(item === 'Priest'){
+                                        color = "gold"
+                                    }
+                                     return <Tag style={{padding: 0, border: 'none'}} color={color}><Radio.Button style={{color:'unset', background:'unset'}} value={item} key={item}>{item}</Radio.Button></Tag>
+                                }) 
+                            
+                            }
+                            
+                           
                         </Radio.Group>
                         </Form.Item>
 
