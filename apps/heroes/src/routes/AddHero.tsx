@@ -8,9 +8,9 @@ const AddHero = () => {
         <div>
             <p style={{width: '100%', fontWeight: 'bold', marginBottom: 20}}>New Hero</p>
             <Button type="primary" ><Link to="/heroes">Back</Link></Button>
-            <Form name="add_hero" style={{marginTop: 30}} labelCol={{span:6}} wrapperCol={{span:18}} >
+            <Form name="add_hero" style={{marginTop: 30}} labelCol={{span:4, md: 6}}  wrapperCol={{span:18}} >
                 <Row>
-                    <Col span={12}>
+                    <Col span={24} md={12}>
                         <Form.Item label="Name" name="hero_name" rules={[{required: true, message: "Please input Hero Name"}]} >
                             <Input/>
                         </Form.Item>
@@ -32,7 +32,7 @@ const AddHero = () => {
                                     if(item === 'Priest'){
                                         color = "gold"
                                     }
-                                     return <Tag style={{padding: 0, border: 'none'}} color={color}><Radio.Button style={{color:'unset', background:'unset'}} value={item} key={item}>{item}</Radio.Button></Tag>
+                                     return <Tag style={{padding: 0, border: 'none'}}  key={item} color={color}><Radio.Button style={{color:'unset', background:'unset'}} value={item}>{item}</Radio.Button></Tag>
                                 }) 
                             
                             }
@@ -46,7 +46,7 @@ const AddHero = () => {
                             </Form.Item>
                     </Col>
 
-                    <Col span={12}>
+                    <Col span={24} md={12}>
                         <Form.Item name="strength" label="Strength">
                             <Slider defaultValue={10} />
                         </Form.Item>

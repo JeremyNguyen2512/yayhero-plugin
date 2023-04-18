@@ -83,7 +83,7 @@ const columns = [
       dataIndex: 'name',
       key: 'name',
       render: (name:string, record: {id: number})=>{
-       return <Link to={`heroes/edit/${record.id}`}>{name}</Link>
+       return <Link to={`/heroes/edit/${record.id}`}>{name}</Link>
       }
     },
     {
