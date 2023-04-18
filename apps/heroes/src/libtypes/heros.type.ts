@@ -1,5 +1,7 @@
 export type HeroClass = "Warrior" | "Mage" | "Rogue" | "Priest"
 
+export const HERO_CLASS_LIST: HeroClass[] = ["Warrior" , "Mage" , "Rogue" , "Priest"]
+
 interface Hero {
   name: string;
   class: HeroClass;

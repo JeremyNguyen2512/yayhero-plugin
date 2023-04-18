@@ -2,8 +2,9 @@ import React from 'react';
 import { Table, Tag, Button, Space } from 'antd';
 import { HeroModel } from '../libtypes/heros.type';
 import { useState } from 'react';
+import {Link} from 'react-router-dom';
 
-const HERO_LIST: HeroModel[] = [
+const HERO_LIST: HeroModel[] = [    
     {
         key: 12,
       id: 1,
@@ -81,6 +82,9 @@ const columns = [
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      render: (name:string, record: {id: number})=>{
+       return <Link to={`heroes/edit/${record.id}`}>{name}</Link>
+      }
     },
     {
         title: 'Class',
@@ -141,13 +145,6 @@ const columns = [
   const ListHero: React.FC = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   
-    const start = () => {
-      // ajax request after empty completing
-      setTimeout(() => {
-        setSelectedRowKeys([]);
-      }, 1000);
-    };
-  
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
       console.log('selectedRowKeys changed: ', newSelectedRowKeys);
       setSelectedRowKeys(newSelectedRowKeys);
@@ -162,7 +159,8 @@ const columns = [
       <div>
         <Space.Compact block style={{marginBottom: 16, alignItems: 'center'}} >
             <span style={{width: '100%', fontWeight: 'bold'}}>Heroes</span>
-            <Button type="primary" style={{borderRadius: '6px'}}>Add Heroes</Button>
+            <Button type="primary" style={{borderRadius: '6px'}}><Link to="/heroes/add">Add Heroes</Link></Button>
+            
         </Space.Compact>
         <Table rowSelection={rowSelection} columns={columns} dataSource={HERO_LIST} />
       </div>
