@@ -28,8 +28,8 @@ const AddHero = () => {
             },
         }
         try{
-            // const dataRespon = await axios.post(api_url, dataPost) 
-            // console.log(dataRespon.data)       
+            const dataRespon = await axios.post(api_url, dataPost) 
+            console.log(dataRespon.data)       
         }
         catch(error){
             console.log(error)
