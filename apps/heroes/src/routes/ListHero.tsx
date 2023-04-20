@@ -1,77 +1,10 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Table, Tag, Button, Space } from 'antd';
-import { HeroModel } from '../libtypes/heros.type';
-import { useState } from 'react';
 import {Link} from 'react-router-dom';
+import {  useHeroStore } from '../store/heroStore';
+import { HeroModel } from '../libtypes/heros.type';
+import axios from 'axios';
 
-const HERO_LIST: HeroModel[] = [    
-    {
-        key: 12,
-      id: 1,
-      name: "Iron Man",
-      class: "Warrior",
-      level: 10,
-      attributes: {
-        strength: 10,
-        dexterity: 10,
-        intelligence: 10,
-        vitality: 10,
-      },
-    },
-    {
-        key: 2,
-      id: 2,
-      name: "Thor",
-      class: "Priest",
-      level: 10,
-      attributes: {
-        strength: 10,
-        dexterity: 10,
-        intelligence: 10,
-        vitality: 10,
-      },
-    },
-    {
-        key:3,
-      id: 3,
-      name: "Black Widow",
-      class: "Rogue",
-      level: 5,
-      attributes: {
-        strength: 10,
-        dexterity: 10,
-        intelligence: 10,
-        vitality: 10,
-      },
-    },
-    {
-        key: 4,
-      id: 4,
-      name: "Scarlet Witch",
-      class: "Mage",
-      level: 15,
-      attributes: {
-        strength: 10,
-        dexterity: 10,
-        intelligence: 10,
-        vitality: 10,
-      },
-    },
-    {
-        key: 5,
-      id: 5,
-      name: "Dr. Strange",
-      class: "Mage",
-      level: 10,
-      attributes: {
-        strength: 10,
-        dexterity: 10,
-        intelligence: 10,
-        vitality: 10,
-      },
-    },
-  ]
-  
 const columns = [
     {
         title: 'ID',
@@ -142,11 +75,22 @@ const columns = [
     },
   ];
 
-  const ListHero: React.FC = () => {
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  /**
+   * 
+   * @returns data json
+   */
+
+
+const ListHero: React.FC = () => {
+  // get data heroes from hero srote
+ const { listHero, setListHero } = useHeroStore();
+  useEffect( () => {
+   setListHero();
+  }, []);
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-      console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
       setSelectedRowKeys(newSelectedRowKeys);
     };
   
@@ -155,14 +99,15 @@ const columns = [
       onChange: onSelectChange,
     };
   
+
     return (
       <div>
         <Space.Compact block style={{marginBottom: 16, alignItems: 'center'}} >
             <span style={{width: '100%', fontWeight: 'bold'}}>Heroes</span>
             <Button type="primary" style={{borderRadius: '6px'}}><Link to="/heroes/add">Add Heroes</Link></Button>
-            
         </Space.Compact>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={HERO_LIST} />
+        <Table rowSelection={rowSelection} columns={columns} dataSource={listHero} />
+
       </div>
     );
   };

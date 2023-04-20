@@ -23,3 +23,14 @@ export type HeroClassColors = Record<HeroClass, {
   color: string;
   activeColor: string;
 }>
+
+export type HeroType = Hero
+
+
+declare global {
+  interface Window{
+    appLocalize :{
+      api_url: string,
+    }
+  }
+}
