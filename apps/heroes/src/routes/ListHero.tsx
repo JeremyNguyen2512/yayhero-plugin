@@ -1,10 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { Table, Tag, Button, Space } from 'antd';
-import type { ColumnType } from 'antd/es/table';
+import { Table, Tag, Button, Space, Popconfirm } from 'antd';
 import {Link} from 'react-router-dom';
 import {  useHeroStore } from '../store/heroStore';
 import axios from 'axios';
-import { HeroModel } from '../libtypes/heros.type';
 
 const ListHero: React.FC = () => {
    
@@ -69,9 +67,12 @@ const ListHero: React.FC = () => {
         title: 'Action',
         key: 'action',
         render: (record: {id: number})=>(
-            <Button type="primary" danger onClick={()=>handleDelete(record.id)}>
+          <Popconfirm placement='left' title="Are you sure to delete this Hero?" okText="Yes" cancelText="No" onConfirm={()=>handleDelete(record.id)}> 
+            <Button type="primary" danger>
               Delete
             </Button>
+          </Popconfirm>
+            
             )
     },
   ];
@@ -82,12 +83,16 @@ const ListHero: React.FC = () => {
     try{
       const dataRespon = await axios.delete(api_url)
       console.log(dataRespon)
+      if(dataRespon !== null){
+        setListHero()
+      }
     }
     catch(e){
       console.log(e)
       return 'error';
     }
   }
+
 
   // get data heroes from hero srote
  const { listHero, setListHero } = useHeroStore();

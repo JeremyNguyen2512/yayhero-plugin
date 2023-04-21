@@ -57,24 +57,39 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
             
         }
 
-        public function add_hero($reg){
-                $args = array(
-                    'post_type'     =>'yay_hero',
-                    'post_status'   =>'publish',
-                    'post_title'    => sanitize_text_field( $reg['name']),
-                );
-                // $post_id = wp_insert_post($args);
-    
-                // if($post_id > 0){
-                //     add_post_meta($post_id, 'class', sanitize_text_field($reg['class']));
-                //     add_post_meta($post_id, 'level', sanitize_text_field($reg['level']));
-                //     add_post_meta($post_id, 'attributes',sanitize_text_field($reg['attributes']));
-                // }
-                $status = 'success';
-                $mess = 'HeroID is ';
-                $respon = sanitize_text_field($reg['attributes']);
+        public function add_hero($request){
             
-            return new WP_REST_Response(array('status'=> $status, 'mess'=>$respon));
+            $newAttributes = array();
+            $attributes = $request['attributes'];
+            if(is_array($attributes)){
+                foreach($attributes as $attribute => $value){
+                    switch($attribute){
+                        case 'strength':
+                        case 'dexterity':
+                        case 'intelligence':
+                        case 'vitality':
+                        $sanitizeValue = sanitize_text_field($value);
+                        $newAttributes[$attribute] = $sanitizeValue;
+                        break;
+                    }
+                }
+            }
+            $args = array(
+                'post_type'     =>'yay_hero',
+                'post_status'   =>'publish',
+                'post_title'    => sanitize_text_field( $request['name']),
+            );
+            $post_id = wp_insert_post($args);
+
+            if($post_id > 0){
+                add_post_meta($post_id, 'class', sanitize_text_field($request['class']));
+                add_post_meta($post_id, 'level', sanitize_text_field($request['level']));
+                add_post_meta($post_id, 'attributes',$newAttributes);
+            }
+            $status = 'success';
+            $mess = 'HeroID is '.$post_id;
+            
+            return new WP_REST_Response($status);
         }
 
         public function update_hero($request){
