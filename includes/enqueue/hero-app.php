@@ -28,6 +28,9 @@ function yayhero_register_entry()
     wp_localize_script("module/yayhero/main.tsx", "yayHeroData", [
         'isRtl' => is_rtl()
     ]);
+    wp_localize_script("module/yayhero/main.tsx", 'appLocalize', [
+        'api_url'=> get_rest_url(),
+    ]);
 }
 
 function yayhero_register_preload_modules()

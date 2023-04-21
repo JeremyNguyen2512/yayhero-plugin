@@ -5,7 +5,10 @@ import {  useHeroStore } from '../store/heroStore';
 import { HeroModel } from '../libtypes/heros.type';
 import axios from 'axios';
 
-const columns = [
+const ListHero: React.FC = () => {
+   
+  //set column of table column
+  const columns = [
     {
         title: 'ID',
         dataIndex: 'id',
@@ -64,24 +67,27 @@ const columns = [
     {
         title: 'Action',
         key: 'action',
-        render: ()=>(
-            <span>
-<Button type="primary" danger>
-            Delete
+        render: (record: {id: number})=>(
+            <Button type="primary" danger onClick={()=>handleDelete(record.id)}>
+              Delete
             </Button>
-            </span>
-            
             )
     },
   ];
 
-  /**
-   * 
-   * @returns data json
-   */
+  //delete data from hero store
+  const handleDelete = async (hero_id:number) =>{
+    const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/delete/${hero_id}`
+    try{
+      const dataRespon = await axios.delete(api_url)
+      console.log(dataRespon)
+    }
+    catch(e){
+      console.log(e)
+      return 'error';
+    }
+  }
 
-
-const ListHero: React.FC = () => {
   // get data heroes from hero srote
  const { listHero, setListHero } = useHeroStore();
   useEffect( () => {
@@ -98,7 +104,6 @@ const ListHero: React.FC = () => {
       selectedRowKeys,
       onChange: onSelectChange,
     };
-  
 
     return (
       <div>

@@ -13,7 +13,7 @@ const AddHero = () => {
     }
 
     //add hero with call api
-    const api_url:string = `${window.appLocalize.api_url}yayhero/v1/add_hero`
+    const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/add`
     const [form] = Form.useForm()
     const handle_post_data = async (value: any)=>{
         const dataPost:HeroType = {
