@@ -58,11 +58,11 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
         }
 
         public function add_hero($reg){
-                // $args = array(
-                //     'post_type'     =>'yay_hero',
-                //     'post_status'   =>'publish',
-                //     'post_title'    => sanitize_text_field( $reg['name']),
-                // );
+                $args = array(
+                    'post_type'     =>'yay_hero',
+                    'post_status'   =>'publish',
+                    'post_title'    => sanitize_text_field( $reg['name']),
+                );
                 // $post_id = wp_insert_post($args);
     
                 // if($post_id > 0){
