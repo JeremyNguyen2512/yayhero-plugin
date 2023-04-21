@@ -36,8 +36,8 @@ const AddHero = () => {
         }
 
         
-        setFormPopup(true);
-        form.resetFields();
+        //setFormPopup(true);
+        //form.resetFields();
     }
     return (
         <div>

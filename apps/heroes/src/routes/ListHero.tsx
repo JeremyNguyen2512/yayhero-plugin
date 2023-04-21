@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import { Table, Tag, Button, Space } from 'antd';
+import type { ColumnType } from 'antd/es/table';
 import {Link} from 'react-router-dom';
 import {  useHeroStore } from '../store/heroStore';
-import { HeroModel } from '../libtypes/heros.type';
 import axios from 'axios';
+import { HeroModel } from '../libtypes/heros.type';
 
 const ListHero: React.FC = () => {
    
