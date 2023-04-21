@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom'
-import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag, Modal } from 'antd';
+import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag, Modal, Alert } from 'antd';
 import { HERO_CLASS_LIST, HeroType } from '../libtypes/heros.type';
 import axios from 'axios';
 
@@ -28,7 +28,7 @@ const AddHero = () => {
             },
         }
         try{
-            const dataRespon = await axios.post(api_url, dataPost) 
+            const dataRespon = await axios.post(api_url, dataPost)
             console.log(dataRespon.data)       
         }
         catch(error){
@@ -36,8 +36,8 @@ const AddHero = () => {
         }
 
         
-        setFormPopup(true);
-        form.resetFields();
+        //setFormPopup(true);
+        //form.resetFields();
     }
     return (
         <div>
@@ -104,11 +104,11 @@ const AddHero = () => {
                 </Row>
             </Form>
 
-            <Modal title="Add Hero Success!" onCancel={handleOk} open={formPopup} footer={[
+            <Modal onCancel={handleOk} open={formPopup} footer={[
             <Button key="link" type='default'><Link to="/heroes">Go To List Heroes</Link></Button>,
             <Button key="add" type="primary" onClick={handleOk}>Add New Hero</Button>
             ]}>
-                
+                <Alert message="Add Hero Success!" type='success'></Alert>
             </Modal>
         </div>
     );

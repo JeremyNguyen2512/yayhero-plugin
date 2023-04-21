@@ -57,40 +57,50 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
             
         }
 
-        public function add_hero($reg){
-                $args = array(
-                    'post_type'     =>'yay_hero',
-                    'post_status'   =>'publish',
-                    'post_title'    =>$reg['name'],
-                );
-                $post_id = wp_insert_post($args);
-    
-                if($post_id > 0){
-                    add_post_meta($post_id, 'class', $reg['class']);
-                    add_post_meta($post_id, 'level', $reg['level']);
-                    add_post_meta($post_id, 'attributes',$reg['attributes']);
-                }
-                $status = 'success';
-                $mess = 'HeroID is '. $post_id;
+        public function add_hero($request){
             
-            return new WP_REST_Response(array('status'=> $status, 'mess'=>$mess));
+            $newAttributes = array();
+            $attributes = $request['attributes'];
+            if(is_array($attributes)){
+                foreach($attributes as $attribute => $value){
+                    switch($attribute){
+                        case 'strength':
+                        case 'dexterity':
+                        case 'intelligence':
+                        case 'vitality':
+                        $sanitizeValue = sanitize_text_field($value);
+                        $newAttributes[$attribute] = $sanitizeValue;
+                        break;
+                    }
+                }
+            }
+            $args = array(
+                'post_type'     =>'yay_hero',
+                'post_status'   =>'publish',
+                'post_title'    => sanitize_text_field( $request['name']),
+            );
+            $post_id = wp_insert_post($args);
+
+            if($post_id > 0){
+                add_post_meta($post_id, 'class', sanitize_text_field($request['class']));
+                add_post_meta($post_id, 'level', sanitize_text_field($request['level']));
+                add_post_meta($post_id, 'attributes',$newAttributes);
+            }
+            $status = 'success';
+            $mess = 'HeroID is '.$post_id;
+            
+            return new WP_REST_Response($status);
         }
 
-        public function update_hero($reg){
+        public function update_hero($request){
 
         }
 
         public function delete_hero($request){
-            // $hero_ids = array(110);
-            // foreach($hero_ids as $post_id){
-            //     $meta_ids = get_post_meta($post_id);
-            //     foreach ( $meta_ids as $meta_key => $meta_id ) {
-            //         delete_post_meta( $post_id, $meta_key, $meta_id[0] );
-            //     }
-            //     wp_delete_post( $post_id, true );
-            // }
-            $respon = $request->get_param('heroid_param');
-            return new WP_REST_Response('Deleted hero '.$respon);
+            $hero_id = $request->get_param('heroid_param');
+            
+            $respon = wp_delete_post( $hero_id, true );
+            return new WP_REST_Response($respon);
         }
     }
 
