@@ -26,6 +26,11 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
                 'callback' => [$this, 'delete_hero'],
             ) );
 
+            register_rest_route( 'yayhero/v1', '/heroes/update/(?P<heroid_param>\d+)', array(
+                'methods' => 'PUT',
+                'callback' => [$this, 'update_hero'],
+            ) );
+
         }
 
         public function get_list_hero(){
@@ -57,28 +62,73 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
             
         }
 
-        public function add_hero($reg){
-                // $args = array(
-                //     'post_type'     =>'yay_hero',
-                //     'post_status'   =>'publish',
-                //     'post_title'    => sanitize_text_field( $reg['name']),
-                // );
-                // $post_id = wp_insert_post($args);
-    
-                // if($post_id > 0){
-                //     add_post_meta($post_id, 'class', sanitize_text_field($reg['class']));
-                //     add_post_meta($post_id, 'level', sanitize_text_field($reg['level']));
-                //     add_post_meta($post_id, 'attributes',sanitize_text_field($reg['attributes']));
-                // }
-                $status = 'success';
-                $mess = 'HeroID is ';
-                $respon = sanitize_text_field($reg['attributes']);
-            
-            return new WP_REST_Response(array('status'=> $status, 'mess'=>$respon));
+        public function add_hero($request){
+            $newAttributes = array();
+            $attributes = $request['attributes'];
+            if(is_array($attributes)){
+                foreach($attributes as $attribute => $value){
+                    switch($attribute){
+                        case 'strength':
+                        case 'dexterity':
+                        case 'intelligence':
+                        case 'vitality':
+                        $sanitizeValue = sanitize_text_field($value);
+                        $newAttributes[$attribute] = $sanitizeValue;
+                        break;
+                    }
+                }
+            }
+            $args = array(
+                'post_type'     =>'yay_hero',
+                'post_status'   =>'publish',
+                'post_title'    => sanitize_text_field( $request['name']),
+            );
+            $post_id = wp_insert_post($args);
+
+            if($post_id > 0){
+                add_post_meta($post_id, 'class', sanitize_text_field($request['class']));
+                add_post_meta($post_id, 'level', sanitize_text_field($request['level']));
+                add_post_meta($post_id, 'attributes',$newAttributes);
+            }
+            $status = 'success';
+            $mess = 'HeroID is '.$post_id;
+
+            return new WP_REST_Response($status);
         }
 
         public function update_hero($request){
 
+            $newAttributes = array();
+            $attributes = $request['attributes'];
+            if(is_array($attributes)){
+                foreach($attributes as $attribute => $value){
+                    switch($attribute){
+                        case 'strength':
+                        case 'dexterity':
+                        case 'intelligence':
+                        case 'vitality':
+                        $sanitizeValue = sanitize_text_field($value);
+                        $newAttributes[$attribute] = $sanitizeValue;
+                        break;
+                    }
+                }
+            }
+
+            $hero_id = $request->get_param('heroid_param');
+            $args = array(
+                'ID'            =>$hero_id,
+                'post_type'     =>'yay_hero',
+                'post_status'   =>'publish',
+                'post_title'    => sanitize_text_field( $request['name']),
+            );
+
+            wp_update_post($args);
+            update_post_meta($hero_id, 'class', sanitize_text_field($request['class']));
+            update_post_meta($hero_id, 'level', sanitize_text_field($request['level']));
+            update_post_meta($hero_id, 'attributes',$newAttributes);
+
+            
+            return new WP_REST_Response('Update hero success with id: '.$hero_id);
         }
 
         public function delete_hero($request){

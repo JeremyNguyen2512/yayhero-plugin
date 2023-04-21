@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom'
-import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag, Modal } from 'antd';
+import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag, Modal, Alert } from 'antd';
 import { HERO_CLASS_LIST, HeroType } from '../libtypes/heros.type';
 import axios from 'axios';
 
@@ -12,11 +12,19 @@ const AddHero = () => {
         setFormPopup(false)
     }
 
+    //state of form when submit
+    const [formDisable, setformDisable] = useState<boolean>(false);
+
+    //state of loading button
+    const [loading, setLoading] = useState<boolean>(false)
+
     //add hero with call api
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/add`
     const [form] = Form.useForm()
-    const handle_post_data = async (value: any)=>{
-        const dataPost:HeroType = {
+    const handlePostData = async (value: any)=>{
+        setformDisable(true)
+        setLoading(true)
+        const dataHero:HeroType = {
             name: value.hero_name,
             class: value.hero_class,
             level: value.hero_level,
@@ -28,7 +36,7 @@ const AddHero = () => {
             },
         }
         try{
-            const dataRespon = await axios.post(api_url, dataPost) 
+            const dataRespon = await axios.post(api_url, dataHero)
             console.log(dataRespon.data)       
         }
         catch(error){
@@ -36,14 +44,16 @@ const AddHero = () => {
         }
 
         
-        //setFormPopup(true);
-        //form.resetFields();
+        setFormPopup(true);
+        setformDisable(false)
+        setLoading(false)
+        form.resetFields();
     }
     return (
         <div>
             <p style={{width: '100%', fontWeight: 'bold', marginBottom: 20}}>New Hero</p>
             <Button type="primary" ><Link to="/heroes">Back</Link></Button>
-            <Form name="add_hero" style={{marginTop: 30}} labelCol={{span:4, md: 6}} form={form}  wrapperCol={{span:18}} onFinish={handle_post_data} >
+            <Form name="add_hero" disabled={formDisable} style={{marginTop: 30}} labelCol={{span:4, md: 6}} form={form}  wrapperCol={{span:18}} onFinish={handlePostData} >
                 <Row>
                     <Col span={24} md={12}>
                         <Form.Item label="Name" name="hero_name" rules={[{required: true, message: "Please input Hero Name"}]} >
@@ -98,17 +108,17 @@ const AddHero = () => {
 
                     <Col span={24} style={{textAlign: 'center'}}>
                         <Form.Item wrapperCol={{span:24}}>
-                            <Button type="primary" htmlType="submit">Create Hero</Button>
+                            <Button type="primary" htmlType="submit" loading={loading}>Create Hero</Button>
                         </Form.Item>
                     </Col>
                 </Row>
             </Form>
 
-            <Modal title="Add Hero Success!" onCancel={handleOk} open={formPopup} footer={[
+            <Modal onCancel={handleOk} title='Add Hero Success!' open={formPopup} footer={[
             <Button key="link" type='default'><Link to="/heroes">Go To List Heroes</Link></Button>,
-            <Button key="add" type="primary" onClick={handleOk}>Add New Hero</Button>
+            <Button key="add"  type="primary" onClick={handleOk}>Add New Hero</Button>
             ]}>
-                
+              
             </Modal>
         </div>
     );

@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Table, Tag, Button, Space } from 'antd';
-import type { ColumnType } from 'antd/es/table';
+import { Table, Tag, Button, Space, Popconfirm } from 'antd';
 import {Link} from 'react-router-dom';
 import {  useHeroStore } from '../store/heroStore';
 import axios from 'axios';
@@ -69,9 +68,11 @@ const ListHero: React.FC = () => {
         title: 'Action',
         key: 'action',
         render: (record: {id: number})=>(
-            <Button type="primary" danger onClick={()=>handleDelete(record.id)}>
-              Delete
-            </Button>
+          <Popconfirm placement='left' title="Are you sure to delete this Hero?" okText="Yes" cancelText="No" onConfirm={()=>handleDelete(record.id)}> 
+          <Button type="primary" danger>
+            Delete
+          </Button>
+        </Popconfirm>
             )
     },
   ];
@@ -81,6 +82,7 @@ const ListHero: React.FC = () => {
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/delete/${hero_id}`
     try{
       const dataRespon = await axios.delete(api_url)
+      setListHero()
       console.log(dataRespon)
     }
     catch(e){
