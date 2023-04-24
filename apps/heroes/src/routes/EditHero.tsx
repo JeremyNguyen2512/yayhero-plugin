@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { useParams } from 'react-router-dom';
 import { useHeroStore } from '../store/heroStore';
 import {Link} from 'react-router-dom'
@@ -32,7 +32,6 @@ const EditHero = () => {
 
     //update hero with call api
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/update/${heroId}`
-    const [form] = Form.useForm()
     const handleUpdateData = async(value:any) =>{
         setformDisable(true)
         setLoading(true)
@@ -49,7 +48,7 @@ const EditHero = () => {
         }
         try{
             const dataRespon = await axios.put(api_url, dataHero)
-            console.log(dataRespon.data)     
+            console.log(dataRespon.data)  
         }
         catch(error){
             console.log(error)

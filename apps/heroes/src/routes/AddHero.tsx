@@ -3,8 +3,11 @@ import {Link} from 'react-router-dom'
 import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag, Modal, Alert } from 'antd';
 import { HERO_CLASS_LIST, HeroType } from '../libtypes/heros.type';
 import axios from 'axios';
+import { useHeroStore } from '../store/heroStore';
 
 const AddHero = () => {
+
+    const {listHero, setListHero} = useHeroStore()
 
     //show popup form after submit
     const [formPopup, setFormPopup] = useState(false)
@@ -16,14 +19,14 @@ const AddHero = () => {
     const [formDisable, setformDisable] = useState<boolean>(false);
 
     //state of loading button
-    const [loading, setLoading] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     //add hero with call api
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/add`
     const [form] = Form.useForm()
     const handlePostData = async (value: any)=>{
         setformDisable(true)
-        setLoading(true)
+        setIsLoading(true)
         const dataHero:HeroType = {
             name: value.hero_name,
             class: value.hero_class,
@@ -37,7 +40,8 @@ const AddHero = () => {
         }
         try{
             const dataRespon = await axios.post(api_url, dataHero)
-            console.log(dataRespon.data)       
+            console.log(dataRespon.data)  
+            setListHero()     
         }
         catch(error){
             console.log(error)
@@ -46,7 +50,7 @@ const AddHero = () => {
         
         setFormPopup(true);
         setformDisable(false)
-        setLoading(false)
+        setIsLoading(false)
         form.resetFields();
     }
     return (
@@ -108,7 +112,7 @@ const AddHero = () => {
 
                     <Col span={24} style={{textAlign: 'center'}}>
                         <Form.Item wrapperCol={{span:24}}>
-                            <Button type="primary" htmlType="submit" loading={loading}>Create Hero</Button>
+                            <Button type="primary" htmlType="submit" loading={isLoading}>Create Hero</Button>
                         </Form.Item>
                     </Col>
                 </Row>
