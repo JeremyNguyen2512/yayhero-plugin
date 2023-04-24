@@ -13,7 +13,7 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
         public function create_rest_route(){
             register_rest_route('yayhero/v1', '/heroes/list', [
                 'method' => 'GET',
-                'callback' => [$this, 'get_list_hero']
+                'callback' => [$this, 'get_list_hero'],
             ]);
 
             register_rest_route( 'yayhero/v1', '/heroes/add', array(
@@ -33,11 +33,15 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
 
         }
 
-        public function get_list_hero(){
-           
+        public function get_list_hero($request){
+            $posts_per_page = (int)$request['posts_per_page'];
+            $paged = (int)$request['paged'];
+
             $args =  array(
                 'post_type'     =>'yay_hero',
                 'post_status'   =>'publish',
+                'posts_per_page'=>$posts_per_page,
+                'paged'         =>$paged
             );
             $hero_posts = new WP_Query( $args );
             $data_hero = array();
@@ -55,10 +59,10 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
 
                     array_push($data_hero, $data);
                 endwhile;
-                wp_reset_postdata();
+                // wp_reset_postdata();
             endif;
             
-            return rest_ensure_response($data_hero) ;
+            return new WP_REST_Response(array('hero_data'=>$data_hero, 'total_data'=>$hero_posts->found_posts));
             
         }
 

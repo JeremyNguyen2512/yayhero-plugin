@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import { Table, Tag, Button, Space, Popconfirm } from 'antd';
+import { Table, Tag, Button, Space, Popconfirm, Pagination } from 'antd';
 import {Link} from 'react-router-dom';
 import {  useHeroStore } from '../store/heroStore';
 import axios from 'axios';
-import { HeroModel } from '../libtypes/heros.type';
+
 
 const ListHero: React.FC = () => {
-   
+
   //set column of table column
   const columns = [
     {
@@ -19,7 +19,7 @@ const ListHero: React.FC = () => {
       dataIndex: 'name',
       key: 'name',
       render: (name:string, record: {id: number})=>{
-       return <Link to={`/heroes/edit/${record.id}`}>{name}</Link>
+        return <Link to={`/heroes/edit/${record.id}`}>{name}</Link>
       }
     },
     {
@@ -68,22 +68,28 @@ const ListHero: React.FC = () => {
         title: 'Action',
         key: 'action',
         render: (record: {id: number})=>(
-          <Popconfirm placement='left' title="Are you sure to delete this Hero?" okText="Yes" cancelText="No" onConfirm={()=>handleDelete(record.id)}> 
-          <Button type="primary" danger>
-            Delete
-          </Button>
-        </Popconfirm>
+          <Popconfirm placement='left'
+            title="Are you sure to delete this Hero?"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={()=>handleDelete(record.id)}> 
+              <Button type="primary" danger>
+                Delete
+              </Button>
+          </Popconfirm>
             )
     },
   ];
 
+  const [loading, setLoading] = useState(false);
+  const[page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(5)
   //delete data from hero store
   const handleDelete = async (hero_id:number) =>{
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/delete/${hero_id}`
     try{
       const dataRespon = await axios.delete(api_url)
-      setListHero()
-      console.log(dataRespon)
+      // setListHero()
     }
     catch(e){
       console.log(e)
@@ -91,33 +97,61 @@ const ListHero: React.FC = () => {
     }
   }
 
-  // get data heroes from hero srote
- const { listHero, setListHero } = useHeroStore();
-  useEffect( () => {
-   setListHero();
+  const handleOnChange = async(page:number, pageSize:number)=>{
+    setLoading(true)
+    setPage(page)
+    setPageSize(pageSize)
+    await setListHero(page, pageSize)
+    setLoading(false)
+  }
+
+  // get data from hero srote
+ const { listHero,totalHero, setListHero } = useHeroStore();
+    useEffect(() => {
+     setListHero(page, pageSize);
+     
   }, []);
 
+
+  //select row
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
       setSelectedRowKeys(newSelectedRowKeys);
     };
   
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: onSelectChange,
-    };
-
-    return (
-      <div>
-        <Space.Compact block style={{marginBottom: 16, alignItems: 'center'}} >
-            <span style={{width: '100%', fontWeight: 'bold'}}>Heroes</span>
-            <Button type="primary" style={{borderRadius: '6px'}}><Link to="/heroes/add">Add Heroes</Link></Button>
-        </Space.Compact>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={listHero} />
-
-      </div>
-    );
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
   };
+
+  return (
+    <div>
+      <Space.Compact block style={{marginBottom: 16, alignItems: 'center'}} >
+          <span style={{width: '100%', fontWeight: 'bold'}}>Heroes</span>
+          <Button type="primary" style={{borderRadius: '6px'}}><Link to="/heroes/add">Add Heroes</Link></Button>
+      </Space.Compact>
+      <Table 
+      rowSelection={rowSelection}
+      columns={columns} 
+      dataSource={listHero}
+      pagination={false}
+      loading={loading}
+      />
+      <Pagination
+        showSizeChanger
+        onChange={(page, pageSize)=>{
+          handleOnChange(page, pageSize)
+        }}
+        defaultCurrent={1}
+        defaultPageSize={5}
+        pageSizeOptions={[5,10, 15, 20]}
+        total={totalHero}
+        style={{marginTop: 30}}
+      />
+
+    </div>
+  );
+};
 
 export default ListHero;

@@ -30,7 +30,7 @@ const EditHero = () => {
     }
     const [heroData, setHeroData] = useState<HeroModel | undefined>(heroDataById);
 
-    //add hero with call api
+    //update hero with call api
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/update/${heroId}`
     const [form] = Form.useForm()
     const handleUpdateData = async(value:any) =>{
@@ -81,6 +81,7 @@ const EditHero = () => {
                     vitality: heroData?.attributes.vitality,
 
                 }}
+                
                   >
                 <Row>
                     <Col span={24} md={12}>
