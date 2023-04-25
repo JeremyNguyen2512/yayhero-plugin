@@ -31,6 +31,7 @@ declare global {
   interface Window{
     appLocalize :{
       api_url: string,
+      hero_nonce: string
     }
   }
 }

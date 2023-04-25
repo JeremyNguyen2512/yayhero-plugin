@@ -32,7 +32,6 @@ const EditHero = () => {
 
     //update hero with call api
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/update/${heroId}`
-    const [form] = Form.useForm()
     const handleUpdateData = async(value:any) =>{
         setformDisable(true)
         setLoading(true)
@@ -48,7 +47,12 @@ const EditHero = () => {
             },
         }
         try{
-            const dataRespon = await axios.put(api_url, dataHero)
+            const checkNonce = {
+                headers:{
+                  'X-WP-Nonce': window.appLocalize.hero_nonce
+                }
+              }
+            const dataRespon = await axios.put(api_url, dataHero, checkNonce)
             console.log(dataRespon.data)     
         }
         catch(error){

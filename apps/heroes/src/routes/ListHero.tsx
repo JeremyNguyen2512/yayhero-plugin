@@ -88,8 +88,13 @@ const ListHero: React.FC = () => {
   const handleDelete = async (hero_id:number) =>{
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/delete/${hero_id}`
     try{
-      const dataRespon = await axios.delete(api_url)
-      // setListHero()
+      const checkNonce = {
+        headers:{
+          'X-WP-Nonce': window.appLocalize.hero_nonce
+        }
+      }
+       await axios.delete(api_url, checkNonce)
+      setListHero(page, pageSize)
     }
     catch(e){
       console.log(e)
@@ -140,14 +145,14 @@ const ListHero: React.FC = () => {
       />
       <Pagination
         showSizeChanger
-        onChange={(page, pageSize)=>{
-          handleOnChange(page, pageSize)
-        }}
         defaultCurrent={1}
         defaultPageSize={5}
         pageSizeOptions={[5,10, 15, 20]}
         total={totalHero}
         style={{marginTop: 30}}
+        onChange={(page, pageSize)=>{
+          handleOnChange(page, pageSize)
+        }}
       />
 
     </div>

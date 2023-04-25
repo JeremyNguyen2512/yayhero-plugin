@@ -29,7 +29,8 @@ function yayhero_register_entry()
         'isRtl' => is_rtl()
     ]);
     wp_localize_script("module/yayhero/main.tsx", 'appLocalize', [
-        'api_url'=> get_rest_url(),
+        'hero_nonce'    => wp_create_nonce('wp_rest'),
+        'api_url'       => get_rest_url(),
     ]);
 }
 
