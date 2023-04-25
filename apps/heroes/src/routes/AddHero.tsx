@@ -46,6 +46,7 @@ const AddHero = () => {
               }
             const dataRespon = await axios.post(api_url, dataHero, checkNonce)
             console.log(dataRespon.data)     
+
         }
         catch(error){
             console.log(error)
@@ -123,10 +124,11 @@ const AddHero = () => {
             </Form>
 
             <Modal onCancel={handleOk} title='Add Hero Success!' open={formPopup} footer={[
+
             <Button key="link" type='default'><Link to="/heroes">Go To List Heroes</Link></Button>,
             <Button key="add"  type="primary" onClick={handleOk}>Add New Hero</Button>
             ]}>
-              
+
             </Modal>
         </div>
     );

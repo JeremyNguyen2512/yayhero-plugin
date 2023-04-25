@@ -82,6 +82,7 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
                 return 'false';
             }
 
+
             $newAttributes = array();
             $attributes = $request['attributes'];
             if(is_array($attributes)){
@@ -111,7 +112,6 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
             }
             $status = 'success';
             $mess = 'HeroID is '.$post_id;
-
             return new WP_REST_Response($status);
         }
 

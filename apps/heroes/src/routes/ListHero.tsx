@@ -14,6 +14,7 @@ interface DataType{
   attributes: HeroAttributes,
 }
 
+
 const ListHero: React.FC = () => {
 
   //set column of table column
@@ -89,6 +90,7 @@ const ListHero: React.FC = () => {
                 Delete
               </Button>
           </Popconfirm>
+
             )
     },
   ];
@@ -107,6 +109,7 @@ const ListHero: React.FC = () => {
       }
        await axios.delete(api_url, checkNonce)
       setListHero(page, pageSize)
+
     }
     catch(e){
       console.log(e)
@@ -127,6 +130,7 @@ const ListHero: React.FC = () => {
     useEffect(() => {
      setListHero(page, pageSize);
      
+
   }, []);
 
 
