@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom'
 import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag, Modal, Alert } from 'antd';
-import { HERO_CLASS_LIST, HeroType } from '../libtypes/heros.type';
+import { HERO_CLASS_LIST, HeroType, USER_PERMISSION} from '../libtypes/heros.type';
 import axios from 'axios';
 import { useHeroStore } from '../store/heroStore';
 
@@ -51,9 +51,8 @@ const AddHero = () => {
         catch(error){
             console.log(error)
         }
-
         
-        setFormPopup(true);
+        setFormPopup(true)
         setformDisable(false)
         setIsLoading(false)
         form.resetFields();
@@ -117,7 +116,9 @@ const AddHero = () => {
 
                     <Col span={24} style={{textAlign: 'center'}}>
                         <Form.Item wrapperCol={{span:24}}>
+                            {USER_PERMISSION === 'write'?(
                             <Button type="primary" htmlType="submit" loading={isLoading}>Create Hero</Button>
+                            ):''}
                         </Form.Item>
                     </Col>
                 </Row>

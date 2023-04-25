@@ -23,7 +23,7 @@ function yayhero_register_entry()
         3
     );
 
-    // $checkNonce = wp_create_nonce('hero_nonce');
+    $user_permission = current_user_can('manage_options')?'write':'read';
 
     wp_register_script("module/yayhero/main.tsx", "http://localhost:3000/main.tsx", ['react', 'react-dom'], null, true); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
     wp_enqueue_script("module/yayhero/main.tsx");
@@ -31,8 +31,9 @@ function yayhero_register_entry()
         'isRtl' => is_rtl(),
     ]);
     wp_localize_script("module/yayhero/main.tsx", 'appLocalize', [
-        'hero_nonce'    => wp_create_nonce('wp_rest'),
-        'api_url'       => get_rest_url(),
+        'hero_nonce'        => wp_create_nonce('wp_rest'),
+        'api_url'           => get_rest_url(),
+        'user_permission'   => $user_permission,
     ]);
 }
 

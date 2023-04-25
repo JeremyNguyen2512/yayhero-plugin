@@ -12,23 +12,27 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
     
         public function create_rest_route(){
             register_rest_route('yayhero/v1', '/heroes/list', [
-                'method' => 'GET',
-                'callback' => [$this, 'get_list_hero'],
+                'method'                => 'GET',
+                'callback'              => [$this, 'get_list_hero'],
+                'permission_callback'   => [$this, 'get_list_hero_permission'],
             ]);
 
             register_rest_route( 'yayhero/v1', '/heroes/add', array(
                 'methods' => 'POST',
                 'callback' => [$this, 'add_hero'],
+                'permission_callback'   => [$this, 'update_hero_permission'],
             ) );
 
             register_rest_route( 'yayhero/v1', '/heroes/delete/(?P<heroid_param>\d+)', array(
                 'methods' => 'DELETE',
                 'callback' => [$this, 'delete_hero'],
+                'permission_callback'   => [$this, 'update_hero_permission'],
             ) );
 
             register_rest_route( 'yayhero/v1', '/heroes/update/(?P<heroid_param>\d+)', array(
                 'methods' => 'PUT',
                 'callback' => [$this, 'update_hero'],
+                'permission_callback'   => [$this, 'update_hero_permission'],
             ) );
 
         }
@@ -74,6 +78,10 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
             
         }
 
+        public function get_list_hero_permission(){
+            return current_user_can('read');
+        }
+
         public function add_hero($request){
 
             $request_header = $request->get_headers();
@@ -113,6 +121,10 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
             $status = 'success';
             $mess = 'HeroID is '.$post_id;
             return new WP_REST_Response($status);
+        }
+
+        public function update_hero_permission(){
+            return current_user_can('manage_options');
         }
 
         public function update_hero($request){

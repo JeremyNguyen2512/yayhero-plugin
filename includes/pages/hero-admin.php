@@ -5,7 +5,7 @@ function yayhero_add_admin_page()
     add_menu_page(
         __('Heroes', 'yayhero'),
         __('Heroes', 'yayhero'),
-        'manage_options',
+        'read',
         'yayhero/yayhero-admin.php',
         'yayhero_render_admin_page',
         'dashicons-shield',
