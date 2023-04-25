@@ -23,13 +23,16 @@ function yayhero_register_entry()
         3
     );
 
+    // $checkNonce = wp_create_nonce('hero_nonce');
+
     wp_register_script("module/yayhero/main.tsx", "http://localhost:3000/main.tsx", ['react', 'react-dom'], null, true); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
     wp_enqueue_script("module/yayhero/main.tsx");
     wp_localize_script("module/yayhero/main.tsx", "yayHeroData", [
-        'isRtl' => is_rtl()
+        'isRtl' => is_rtl(),
     ]);
     wp_localize_script("module/yayhero/main.tsx", 'appLocalize', [
-        'api_url'=> get_rest_url(),
+        'hero_nonce'    => wp_create_nonce('wp_rest'),
+        'api_url'       => get_rest_url(),
     ]);
 }
 

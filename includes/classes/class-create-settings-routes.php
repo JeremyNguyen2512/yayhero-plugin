@@ -34,6 +34,13 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
         }
 
         public function get_list_hero($request){
+
+            $request_header = $request->get_headers();
+            $checkNonce = $request_header['x_wp_nonce'][0];
+            if ( !wp_verify_nonce( (string) $checkNonce, 'wp_rest' ) ) {
+				return 'Invalid nonce field';
+			}
+
             $posts_per_page = (int)$request['posts_per_page'];
             $paged = (int)$request['paged'];
 
@@ -44,6 +51,7 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
                 'paged'         =>$paged
             );
             $hero_posts = new WP_Query( $args );
+            $total_data = $hero_posts->found_posts;
             $data_hero = array();
             if ( $hero_posts->have_posts() ):
                 while($hero_posts -> have_posts()): $hero_posts->the_post();
@@ -59,14 +67,21 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
 
                     array_push($data_hero, $data);
                 endwhile;
-                // wp_reset_postdata();
+                wp_reset_postdata();
             endif;
             
-            return new WP_REST_Response(array('hero_data'=>$data_hero, 'total_data'=>$hero_posts->found_posts));
+            return new WP_REST_Response(array('hero_data'=>$data_hero, 'total_data'=>$total_data));
             
         }
 
         public function add_hero($request){
+
+            $request_header = $request->get_headers();
+            $checkNonce = $request_header['x_wp_nonce'][0];
+            if ( !wp_verify_nonce( (string) $checkNonce, 'wp_rest' ) ) {
+				return 'Invalid nonce field';
+			}
+
             $newAttributes = array();
             $attributes = $request['attributes'];
             if(is_array($attributes)){
@@ -102,6 +117,12 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
 
         public function update_hero($request){
 
+            $request_header = $request->get_headers();
+            $checkNonce = $request_header['x_wp_nonce'][0];
+            if ( !wp_verify_nonce( (string) $checkNonce, 'wp_rest' ) ) {
+				return 'Invalid nonce field';
+			}
+
             $newAttributes = array();
             $attributes = $request['attributes'];
             if(is_array($attributes)){
@@ -136,6 +157,13 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
         }
 
         public function delete_hero($request){
+
+            $request_header = $request->get_headers();
+            $checkNonce = $request_header['x_wp_nonce'][0];
+            if ( !wp_verify_nonce( (string) $checkNonce, 'wp_rest' ) ) {
+				return 'Invalid nonce field';
+			}
+            
             $hero_id = $request->get_param('heroid_param');
             
             $respon = wp_delete_post( $hero_id, true );

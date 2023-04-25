@@ -14,6 +14,13 @@ interface Hero {
   }
 }
 
+export type HeroAttributes = {
+  strength: number;
+    dexterity: number;
+    intelligence: number;
+    vitality: number;
+}
+
 export type HeroModel = Hero & {
   key: number;
   id: number;
@@ -31,6 +38,7 @@ declare global {
   interface Window{
     appLocalize :{
       api_url: string,
+      hero_nonce:string
     }
   }
 }

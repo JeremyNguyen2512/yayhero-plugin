@@ -3,13 +3,21 @@ import { Table, Tag, Button, Space, Popconfirm, Pagination } from 'antd';
 import {Link} from 'react-router-dom';
 import {  useHeroStore } from '../store/heroStore';
 import axios from 'axios';
-import { HERO_CLASS_LIST } from '../libtypes/heros.type';
+import { HERO_CLASS_LIST, HeroAttributes, HeroClass } from '../libtypes/heros.type';
+import { ColumnsType } from 'antd/es/table';
 
+interface DataType{
+  id: number,
+  name: string,
+  class: HeroClass,
+  level: number,
+  attributes: HeroAttributes,
+}
 
 const ListHero: React.FC = () => {
 
   //set column of table column
-  const columns = [
+  const columns:ColumnsType<DataType> = [
     {
         title: 'ID',
         dataIndex: 'id',
@@ -29,7 +37,7 @@ const ListHero: React.FC = () => {
       dataIndex: 'class',
       key: 'class',
       filters: HERO_CLASS_LIST.map(item =>({text: item, value: item})),
-      onFilter: (value: string, record:{class:string}) => record.class.indexOf(value) === 0,
+      onFilter: (value: string | number | boolean, record:{class:string})=> { return record.class.indexOf(value.toString()) === 0},
     },
     {
         title: 'Level',
@@ -92,7 +100,12 @@ const ListHero: React.FC = () => {
   const handleDelete = async (hero_id:number) =>{
     const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/delete/${hero_id}`
     try{
-      await axios.delete(api_url)
+      const checkNonce = {
+        headers:{
+            'X-WP-Nonce': window.appLocalize.hero_nonce
+        }
+    }
+      await axios.delete(api_url, checkNonce)
       setListHero(page, pageSize)
     }
     catch(e){
@@ -144,14 +157,14 @@ const ListHero: React.FC = () => {
       />
       <Pagination
         showSizeChanger
-        onChange={(page, pageSize)=>{
-          handleOnChange(page, pageSize)
-        }}
         defaultCurrent={1}
         defaultPageSize={5}
         pageSizeOptions={[5,10, 15, 20]}
         total={totalHero}
         style={{marginTop: 30}}
+        onChange={(page, pageSize)=>{
+          handleOnChange(page, pageSize)
+        }}
       />
 
     </div>

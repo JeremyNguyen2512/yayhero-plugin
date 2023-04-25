@@ -39,7 +39,12 @@ const AddHero = () => {
             },
         }
         try{
-            const dataRespon = await axios.post(api_url, dataHero)
+            const checkNonce = {
+                headers:{
+                    'X-WP-Nonce': window.appLocalize.hero_nonce
+                }
+            }
+            const dataRespon = await axios.post(api_url, dataHero,checkNonce)
             console.log(dataRespon.data)  
             setListHero()     
         }
