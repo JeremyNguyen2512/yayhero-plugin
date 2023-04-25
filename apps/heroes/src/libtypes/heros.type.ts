@@ -2,6 +2,9 @@ export type HeroClass = "Warrior" | "Mage" | "Rogue" | "Priest"
 
 export const HERO_CLASS_LIST: HeroClass[] = ["Warrior" , "Mage" , "Rogue" , "Priest"]
 
+
+export const USER_PERMISSION = window.appLocalize.user_permission
+
 interface Hero {
   name: string;
   class: HeroClass;
@@ -38,7 +41,8 @@ declare global {
   interface Window{
     appLocalize :{
       api_url: string,
-      hero_nonce:string
+      hero_nonce:string,
+      user_permission: string
     }
   }
 }

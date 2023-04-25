@@ -3,7 +3,7 @@ import { Table, Tag, Button, Space, Popconfirm, Pagination } from 'antd';
 import {Link} from 'react-router-dom';
 import {  useHeroStore } from '../store/heroStore';
 import axios from 'axios';
-import { HERO_CLASS_LIST, HeroAttributes, HeroClass } from '../libtypes/heros.type';
+import { HERO_CLASS_LIST, HeroAttributes, HeroClass, USER_PERMISSION } from '../libtypes/heros.type';
 import { ColumnsType } from 'antd/es/table';
 
 interface DataType{
@@ -16,7 +16,6 @@ interface DataType{
 
 
 const ListHero: React.FC = () => {
-
   //set column of table column
   const columns:ColumnsType<DataType> = [
     {
@@ -30,7 +29,7 @@ const ListHero: React.FC = () => {
       key: 'name',
       sorter: (a: {name:string}, b: {name:string}) => a.name.localeCompare(b.name) * -1,
       render: (name:string, record: {id: number})=>{
-        return <Link to={`/heroes/edit/${record.id}`}>{name}</Link>
+        return <Link to={USER_PERMISSION=== 'write'?`/heroes/edit/${record.id}`:''}>{name}</Link>
       },
     },
     {
@@ -49,10 +48,11 @@ const ListHero: React.FC = () => {
         title: 'Attributes',
         dataIndex: 'attributes',
         key: 'attributes',
-        render: (attributes: any[]) => {
+        render: (attributes: any[], record: {id:number}) => {
             
           const tags = [];
           for (const [key, attribute] of Object.entries(attributes)) {
+            // console.log('key', key)
             let color;
             if (key === 'strength') {
               color = 'gold';
@@ -67,7 +67,7 @@ const ListHero: React.FC = () => {
               color = 'cyan';
             }
             tags.push(
-              <Tag color={color} key={attribute}>
+              <Tag color={color} key={record.id+key}>
                 {`${key}: ${attribute}`}
               </Tag>
             );
@@ -81,7 +81,8 @@ const ListHero: React.FC = () => {
         title: 'Action',
         key: 'action',
         render: (record: {id: number})=>(
-          <Popconfirm placement='left'
+          USER_PERMISSION === 'write'?(
+            <Popconfirm placement='left'
             title="Are you sure to delete this Hero?"
             okText="Yes"
             cancelText="No"
@@ -90,6 +91,8 @@ const ListHero: React.FC = () => {
                 Delete
               </Button>
           </Popconfirm>
+          ):''
+         
 
             )
     },
@@ -150,7 +153,10 @@ const ListHero: React.FC = () => {
     <div>
       <Space.Compact block style={{marginBottom: 16, alignItems: 'center'}} >
           <span style={{width: '100%', fontWeight: 'bold'}}>Heroes</span>
-          <Button type="primary" style={{borderRadius: '6px'}}><Link to="/heroes/add">Add Heroes</Link></Button>
+          {USER_PERMISSION === 'write'?(
+            <Button type="primary" style={{borderRadius: '6px'}}><Link to="/heroes/add">Add Heroes</Link></Button>
+          ):''}
+          
       </Space.Compact>
       <Table 
       rowSelection={rowSelection}
@@ -161,7 +167,7 @@ const ListHero: React.FC = () => {
       />
       <Pagination
         showSizeChanger
-        defaultCurrent={1}
+        current={page}
         defaultPageSize={5}
         pageSizeOptions={[5,10, 15, 20]}
         total={totalHero}

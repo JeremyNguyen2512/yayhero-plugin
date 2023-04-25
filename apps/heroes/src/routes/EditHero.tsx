@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useHeroStore } from '../store/heroStore';
 import {Link} from 'react-router-dom'
 import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag, Modal } from 'antd';
-import { HERO_CLASS_LIST, HeroModel, HeroType } from '../libtypes/heros.type';
+import { HERO_CLASS_LIST, HeroModel, HeroType, USER_PERMISSION } from '../libtypes/heros.type';
 import axios from 'axios';
 
 const EditHero = () => {
@@ -141,7 +141,10 @@ const EditHero = () => {
 
                     <Col span={24} style={{textAlign: 'center'}}>
                         <Form.Item wrapperCol={{span:24}}>
+                            {USER_PERMISSION === 'write'?(
                             <Button type="primary" loading={loading} style={{background: '#ffc53d'}} htmlType="submit">Update</Button>
+
+                            ):''}
                         </Form.Item>
                     </Col>
                 </Row>
