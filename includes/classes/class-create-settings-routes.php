@@ -77,10 +77,10 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
         public function add_hero($request){
 
             $request_header = $request->get_headers();
-            $checkNonce = $request_header['x_wp_nonce'][0];
-            if ( !wp_verify_nonce( (string) $checkNonce, 'wp_rest' ) ) {
-				return 'Invalid nonce field';
-			}
+            $check_nonce = $request_header['x_wp_nonce'][0];
+            if(!wp_verify_nonce($check_nonce, 'wp_rest')){
+                return 'false';
+            }
 
             $newAttributes = array();
             $attributes = $request['attributes'];
@@ -118,10 +118,10 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
         public function update_hero($request){
 
             $request_header = $request->get_headers();
-            $checkNonce = $request_header['x_wp_nonce'][0];
-            if ( !wp_verify_nonce( (string) $checkNonce, 'wp_rest' ) ) {
-				return 'Invalid nonce field';
-			}
+            $check_nonce = $request_header['x_wp_nonce'][0];
+            if(!wp_verify_nonce($check_nonce, 'wp_rest')){
+                return 'false';
+            }
 
             $newAttributes = array();
             $attributes = $request['attributes'];
@@ -159,10 +159,10 @@ if(!class_exists('WP_Create_React_Settings_Routes')){
         public function delete_hero($request){
 
             $request_header = $request->get_headers();
-            $checkNonce = $request_header['x_wp_nonce'][0];
-            if ( !wp_verify_nonce( (string) $checkNonce, 'wp_rest' ) ) {
-				return 'Invalid nonce field';
-			}
+            $check_nonce = $request_header['x_wp_nonce'][0];
+            if(!wp_verify_nonce($check_nonce, 'wp_rest')){
+                return 'false';
+            }
             
             $hero_id = $request->get_param('heroid_param');
             

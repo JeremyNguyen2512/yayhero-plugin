@@ -49,11 +49,11 @@ const EditHero = () => {
         try{
             const checkNonce = {
                 headers:{
-                    'X-WP-Nonce': window.appLocalize.hero_nonce
+                  'X-WP-Nonce': window.appLocalize.hero_nonce
                 }
-            }
+              }
             const dataRespon = await axios.put(api_url, dataHero, checkNonce)
-            console.log(dataRespon.data)  
+            console.log(dataRespon.data)      
         }
         catch(error){
             console.log(error)

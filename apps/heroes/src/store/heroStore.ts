@@ -15,13 +15,13 @@ interface HeroDataModel{
 }
 
 const getListHero = async (page?:number, pageSize?:number):Promise<HeroDataModel> =>{
-  const checkNonce = {
-    headers:{
-        'X-WP-Nonce': window.appLocalize.hero_nonce
-    }
-}
   const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/list?paged=${page}&posts_per_page=${pageSize}`
   try{
+    const checkNonce = {
+      headers:{
+        'X-WP-Nonce': window.appLocalize.hero_nonce
+      }
+    }
     const heroData: {data:HeroDataModel} = await axios.get(api_url, checkNonce)
     return heroData.data
   }

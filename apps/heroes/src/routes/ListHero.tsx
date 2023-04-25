@@ -102,10 +102,10 @@ const ListHero: React.FC = () => {
     try{
       const checkNonce = {
         headers:{
-            'X-WP-Nonce': window.appLocalize.hero_nonce
+          'X-WP-Nonce': window.appLocalize.hero_nonce
         }
-    }
-      await axios.delete(api_url, checkNonce)
+      }
+       await axios.delete(api_url, checkNonce)
       setListHero(page, pageSize)
     }
     catch(e){
