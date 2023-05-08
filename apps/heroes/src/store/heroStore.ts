@@ -4,38 +4,40 @@ import axios from "axios";
 
 
 interface HeroStore{
-  totalHero: number,
-  listHero: HeroModel[],
-  setListHero: (page?:number, pageSize?:number)=> void,
+  singleRowHeroSelect?: HeroModel,
+  totalHero?: number,
+  listHero?: HeroModel[],
+  setListHero: (updateHero:HeroModel[])=> void,
+  setSingleRowHeroSelect: (singleHero: HeroModel) => void
 }
 
-interface HeroDataModel{
-  hero_data: HeroModel[],
-  total_data: number
+interface HeroPageStore{
+  page:number,
+  pageSize: number,
+  setPage:(newPage: number) => void,
+  setPageSize: (newPageSize:number) => void
 }
 
-const getListHero = async (page?:number, pageSize?:number):Promise<HeroDataModel> =>{
-  const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/list?paged=${page}&posts_per_page=${pageSize}`
-  try{
-    const checkNonce = {
-      headers:{
-        'X-WP-Nonce': window.appLocalize.hero_nonce
-      }
-    }
-    const heroData: {data:HeroDataModel} = await axios.get(api_url, checkNonce)
-    return heroData.data
-  }
-  catch(error){
-    console.log(error)
-    return { hero_data: [], total_data: 0 };
-  }
-}
 
 export const useHeroStore = create<HeroStore>()((set)=> ({
+  singleRowHeroSelect: undefined,
   listHero: [],
   totalHero: 0,
-  setListHero: async (page?:number, pageSize?:number) => {
-    const {hero_data, total_data} = await getListHero(page, pageSize)
-    set({listHero: hero_data, totalHero: total_data})
+  setListHero: (updateHero?: HeroModel[]) => {
+    set({listHero: updateHero})
   },
+  setSingleRowHeroSelect(singleHero?: HeroModel) {
+    set({singleRowHeroSelect: singleHero})
+  },
+}))
+
+export const useHeroCurrentPageStore = create<HeroPageStore>()((set)=>({
+  page: 1,
+  pageSize: 5,
+  setPage: (newPage: number) => {
+    set({page: newPage})
+  }, 
+  setPageSize: (newPageSize: number)=> {
+    set({pageSize: newPageSize})
+  }
 }))
