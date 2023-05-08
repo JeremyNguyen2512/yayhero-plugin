@@ -115,90 +115,100 @@ const EditHero = () => {
       <Button type="primary">
         <Link to="/heroes">Back</Link>
       </Button>
-      <Form
-        name="add_hero"
-        form={form}
-        disabled={formDisable}
-        style={{ marginTop: 30 }}
-        labelCol={{ span: 4, md: 6 }}
-        wrapperCol={{ span: 18 }}
-        onFinish={updateData}
-      >
-        <Row>
-          <Col span={24} md={12}>
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: true, message: "Please input Hero Name" }]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="Class"
-              name="class"
-              rules={[{ required: true, message: "Please pick an item!" }]}
-            >
-              <HeroClassInput />
-            </Form.Item>
-
-            <Form.Item
-              name="level"
-              label="Level"
-              rules={[{ required: true, message: "Please choose Hero Level" }]}
-            >
-              <InputNumber min={1} max={10} placeholder="1" />
-            </Form.Item>
-          </Col>
-
-          <Col span={24} md={12}>
-            <MyFormItemGroup prefix={["attributes"]}>
-              <MyFormItem name="strength" label="Strength">
-                <Slider disabled={disabled} />
-              </MyFormItem>
-              <MyFormItem name="dexterity" label="Dexterity">
-                <Slider disabled={disabled} />
-              </MyFormItem>
-              <MyFormItem name="intelligence" label="Intelligence">
-                <Slider disabled={disabled} />
-              </MyFormItem>
-              <MyFormItem name="vitality" label="Vitality">
-                <Slider disabled={disabled} />
-              </MyFormItem>
-            </MyFormItemGroup>
-          </Col>
-
-          <Col span={24} style={{ textAlign: "center" }}>
-            <Form.Item wrapperCol={{ span: 24 }}>
-              {USER_PERMISSION === "write" ? (
-                <Button
-                  type="primary"
-                  loading={loading}
-                  style={{ background: "#ffc53d" }}
-                  htmlType="submit"
+      {USER_PERMISSION === "write" ? (
+        <div>
+          <Form
+            name="add_hero"
+            form={form}
+            disabled={formDisable}
+            style={{ marginTop: 30 }}
+            labelCol={{ span: 4, md: 6 }}
+            wrapperCol={{ span: 18 }}
+            onFinish={updateData}
+          >
+            <Row>
+              <Col span={24} md={12}>
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[
+                    { required: true, message: "Please input Hero Name" },
+                  ]}
                 >
-                  Update
-                </Button>
-              ) : (
-                ""
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-      <Modal
-        onCancel={handleOk}
-        title={titleModal}
-        open={formPopup}
-        footer={[
-          <Button key="link" type="default">
-            <Link to="/heroes">Go To List Heroes</Link>
-          </Button>,
-          <Button key="close" type="primary" onClick={handleOk}>
-            Close
-          </Button>,
-        ]}
-      ></Modal>
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  label="Class"
+                  name="class"
+                  rules={[{ required: true, message: "Please pick an item!" }]}
+                >
+                  <HeroClassInput />
+                </Form.Item>
+
+                <Form.Item
+                  name="level"
+                  label="Level"
+                  rules={[
+                    { required: true, message: "Please choose Hero Level" },
+                  ]}
+                >
+                  <InputNumber min={1} max={10} placeholder="1" />
+                </Form.Item>
+              </Col>
+
+              <Col span={24} md={12}>
+                <MyFormItemGroup prefix={["attributes"]}>
+                  <MyFormItem name="strength" label="Strength">
+                    <Slider disabled={disabled} />
+                  </MyFormItem>
+                  <MyFormItem name="dexterity" label="Dexterity">
+                    <Slider disabled={disabled} />
+                  </MyFormItem>
+                  <MyFormItem name="intelligence" label="Intelligence">
+                    <Slider disabled={disabled} />
+                  </MyFormItem>
+                  <MyFormItem name="vitality" label="Vitality">
+                    <Slider disabled={disabled} />
+                  </MyFormItem>
+                </MyFormItemGroup>
+              </Col>
+
+              <Col span={24} style={{ textAlign: "center" }}>
+                <Form.Item wrapperCol={{ span: 24 }}>
+                  {USER_PERMISSION === "write" ? (
+                    <Button
+                      type="primary"
+                      loading={loading}
+                      style={{ background: "#ffc53d" }}
+                      htmlType="submit"
+                    >
+                      Update
+                    </Button>
+                  ) : (
+                    ""
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+          <Modal
+            onCancel={handleOk}
+            title={titleModal}
+            open={formPopup}
+            footer={[
+              <Button key="link" type="default">
+                <Link to="/heroes">Go To List Heroes</Link>
+              </Button>,
+              <Button key="close" type="primary" onClick={handleOk}>
+                Close
+              </Button>,
+            ]}
+          ></Modal>
+        </div>
+      ) : (
+        <h2>You don't have permission to accept this page</h2>
+      )}
     </div>
   );
 };
