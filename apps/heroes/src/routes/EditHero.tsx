@@ -1,162 +1,206 @@
-import React, {useState} from 'react';
-import { useParams } from 'react-router-dom';
-import { useHeroStore } from '../store/heroStore';
-import {Link} from 'react-router-dom'
-import { Button, Form, Input, Slider, Col, Row, Radio, InputNumber, Tag, Modal } from 'antd';
-import { HERO_CLASS_LIST, HeroModel, HeroType, USER_PERMISSION } from '../libtypes/heros.type';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useHeroStore } from "../store/heroStore";
+import { Link } from "react-router-dom";
+import {
+  Button,
+  Form,
+  Input,
+  Slider,
+  Col,
+  Row,
+  InputNumber,
+  Tag,
+  Modal,
+} from "antd";
+import { HeroType, USER_PERMISSION } from "../libtypes/heros.type";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { handleGetSingleHero } from "../service/HeroApi.Service";
+import useMutationHero from "../components/useMutationHero";
+import {
+  HeroClassInput,
+  MyFormItem,
+  MyFormItemGroup,
+} from "../components/form/HeroCustomFormGroup";
+import getHeroDatabyID from "../service/GetHeroDataByID";
 
 const EditHero = () => {
+  const { updateMutation } = useMutationHero();
 
-    //show popup form after submit
-    const [formPopup, setFormPopup] = useState(false)
-    const handleOk = ()=>{
-        setFormPopup(false)
+  //show popup form after submit
+  const [formPopup, setFormPopup] = useState(false);
+  const handleOk = () => {
+    setFormPopup(false);
+  };
+
+  //state of form when submit
+  const [formDisable, setformDisable] = useState<boolean>(false);
+
+  //state of loading button
+  const [loading, setLoading] = useState<boolean>(false);
+  const [disabled, setDisabled] = useState<boolean>(false);
+
+  // state of title modal
+  const [titleModal, setTitleModal] = useState<string>();
+
+  // Get Single Hero From Store
+
+  //get Single Hero by react hook
+  const { singleRowHeroSelect, setSingleRowHeroSelect } = useHeroStore();
+  const { heroId } = useParams();
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (singleRowHeroSelect?.id && Number(heroId) === singleRowHeroSelect.id) {
+      form.setFieldsValue({
+        name: singleRowHeroSelect?.name,
+        class: singleRowHeroSelect?.class,
+        level: singleRowHeroSelect?.level,
+        attributes: {
+          strength: singleRowHeroSelect?.attributes.strength,
+          dexterity: singleRowHeroSelect?.attributes.dexterity,
+          intelligence: singleRowHeroSelect?.attributes.intelligence,
+          vitality: singleRowHeroSelect?.attributes.vitality,
+        },
+      });
     }
+  }, [heroId]);
 
-    //state of form when submit
-    const [formDisable, setformDisable] = useState<boolean>(false);
-
-    //state of loading button
-    const [loading, setLoading] = useState<boolean>(false)
-
-    //get list hero from store
-    const listHero: HeroModel[] = useHeroStore((state)=>state.listHero);
-    const {heroId} = useParams()
-
-    let heroDataById:HeroModel | undefined = undefined;
-    if(listHero.length > 0){
-        heroDataById = listHero.find(hero=> hero.id === Number(heroId));
-    }
-    const [heroData, setHeroData] = useState<HeroModel | undefined>(heroDataById);
-
-    //update hero with call api
-    const api_url:string = `${window.appLocalize.api_url}yayhero/v1/heroes/update/${heroId}`
-    const handleUpdateData = async(value:any) =>{
-        setformDisable(true)
-        setLoading(true)
-        const dataHero:HeroType = {
-            name: value.hero_name,
-            class: value.hero_class,
-            level: value.hero_level,
-            attributes: {
-                strength: value.strength,
-                dexterity: value.dexterity,
-                intelligence: value.intelligence,
-                vitality: value.vitality,
-            },
-        }
-        try{
-            const checkNonce = {
-                headers:{
-                  'X-WP-Nonce': window.appLocalize.hero_nonce
-                }
-              }
-            const dataRespon = await axios.put(api_url, dataHero, checkNonce)
-            console.log(dataRespon.data)      
-        }
-        catch(error){
-            console.log(error)
-        }
-
-        
+  useQuery({
+    queryKey: ["single-hero", heroId],
+    queryFn: () => {
+      return heroId ? handleGetSingleHero(heroId) : null;
+    },
+    onSuccess: (data) => {
+      if (data.length > 0) {
+        form.setFieldsValue({
+          name: data[0]?.name,
+          class: data[0]?.class,
+          level: data[0]?.level,
+          attributes: {
+            strength: Number(data[0]?.attributes.strength),
+            dexterity: Number(data[0]?.attributes.dexterity),
+            intelligence: Number(data[0]?.attributes.intelligence),
+            vitality: Number(data[0]?.attributes.vitality),
+          },
+        });
+        setformDisable(false);
+      } else {
+        setTitleModal("Hero Not Found!");
         setFormPopup(true);
-        setformDisable(false)
-        setLoading(false)
+        setformDisable(true);
+        setDisabled(true);
+      }
+    },
+  });
+
+  //update hero with call api
+  const updateData = async (value: HeroType) => {
+    setformDisable(true);
+    setLoading(true);
+    if (heroId) {
+      await updateMutation.mutateAsync({ heroId: heroId, hero_data: value });
     }
 
-    return (
-        <div>
-            <p style={{width: '100%', fontWeight: 'bold', marginBottom: 20}}>New Hero</p>
-            <Button type="primary" ><Link to="/heroes">Back</Link></Button>
-            <Form name="add_hero"
-                disabled={formDisable}
-                style={{marginTop: 30}}
-                labelCol={{span:4, md: 6}}
-                wrapperCol={{span:18}}
-                onFinish={handleUpdateData}
-                initialValues={{
-                    hero_name: heroData?.name,
-                    hero_class: heroData?.class,
-                    hero_level: heroData?.level,
-                    strength: heroData?.attributes.strength,
-                    dexterity: heroData?.attributes.dexterity,
-                    intelligence: heroData?.attributes.intelligence,
-                    vitality: heroData?.attributes.vitality,
+    setTitleModal("Update Hero Success!");
+    setFormPopup(true);
+    setformDisable(false);
+    setLoading(false);
+  };
+  return (
+    <div>
+      <p style={{ width: "100%", fontWeight: "bold", marginBottom: 20 }}>
+        Edit Hero
+      </p>
+      <Button type="primary">
+        <Link to="/heroes">Back</Link>
+      </Button>
+      <Form
+        name="add_hero"
+        form={form}
+        disabled={formDisable}
+        style={{ marginTop: 30 }}
+        labelCol={{ span: 4, md: 6 }}
+        wrapperCol={{ span: 18 }}
+        onFinish={updateData}
+      >
+        <Row>
+          <Col span={24} md={12}>
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Please input Hero Name" }]}
+            >
+              <Input />
+            </Form.Item>
 
-                }}
-                
-                  >
-                <Row>
-                    <Col span={24} md={12}>
-                        <Form.Item label="Name" name="hero_name" rules={[{required: true, message: "Please input Hero Name"}]} >
-                            <Input defaultValue={heroData?.name} />
-                        </Form.Item>
+            <Form.Item
+              label="Class"
+              name="class"
+              rules={[{ required: true, message: "Please pick an item!" }]}
+            >
+              <HeroClassInput />
+            </Form.Item>
 
-                        <Form.Item label="Class" name="hero_class"  rules={[{ required: true, message: 'Please pick an item!' }]} >
-                        <Radio.Group defaultValue={heroData?.class}>
-                            { 
-                                HERO_CLASS_LIST.map(item=>{
-                                    let color:string = '';
-                                    if(item === 'Warrior'){
-                                        color = "volcano"
-                                    }
-                                    if(item === 'Mage'){
-                                        color = "purple"
-                                    }
-                                    if(item === 'Rogue'){
-                                        color = "blue"
-                                    }
-                                    if(item === 'Priest'){
-                                        color = "gold"
-                                    }
-                                     return <Tag style={{padding: 0, border: 'none'}}  key={item} color={color}><Radio.Button style={{color:'unset', background:'unset'}} value={item}>{item}</Radio.Button></Tag>
-                                }) 
-                            
-                            }
-                            
-                           
-                        </Radio.Group>
-                        </Form.Item>
+            <Form.Item
+              name="level"
+              label="Level"
+              rules={[{ required: true, message: "Please choose Hero Level" }]}
+            >
+              <InputNumber min={1} max={10} placeholder="1" />
+            </Form.Item>
+          </Col>
 
-                            <Form.Item name="hero_level" label="Level" rules={[{required: true, message: "Please choose Hero Level"}]} >
-                                <InputNumber min={1} max={10} defaultValue={heroData?.level} placeholder='1' />
-                            </Form.Item>
-                    </Col>
+          <Col span={24} md={12}>
+            <MyFormItemGroup prefix={["attributes"]}>
+              <MyFormItem name="strength" label="Strength">
+                <Slider disabled={disabled} />
+              </MyFormItem>
+              <MyFormItem name="dexterity" label="Dexterity">
+                <Slider disabled={disabled} />
+              </MyFormItem>
+              <MyFormItem name="intelligence" label="Intelligence">
+                <Slider disabled={disabled} />
+              </MyFormItem>
+              <MyFormItem name="vitality" label="Vitality">
+                <Slider disabled={disabled} />
+              </MyFormItem>
+            </MyFormItemGroup>
+          </Col>
 
-                    <Col span={24} md={12}>
-                        <Form.Item name="strength" label="Strength">
-                            <Slider defaultValue={heroData?.attributes.strength} />
-                        </Form.Item>
-                        <Form.Item name="dexterity" label="Dexterity">
-                            <Slider defaultValue={heroData?.attributes.dexterity} />
-                        </Form.Item>
-                        <Form.Item name="intelligence" label="Intelligence">
-                            <Slider defaultValue={heroData?.attributes.intelligence} />
-                        </Form.Item>
-                        <Form.Item name="vitality" label="Vitality">
-                            <Slider defaultValue={heroData?.attributes.vitality} />
-                        </Form.Item>
-                    </Col>
-
-                    <Col span={24} style={{textAlign: 'center'}}>
-                        <Form.Item wrapperCol={{span:24}}>
-                            {USER_PERMISSION === 'write'?(
-                            <Button type="primary" loading={loading} style={{background: '#ffc53d'}} htmlType="submit">Update</Button>
-
-                            ):''}
-                        </Form.Item>
-                    </Col>
-                </Row>
-            </Form>
-            <Modal onCancel={handleOk} title='Update Hero Success!' open={formPopup} footer={[
-            <Button key="link" type='default'><Link to="/heroes">Go To List Heroes</Link></Button>,
-            <Button key="close"  type="primary" onClick={handleOk}>Close</Button>
-            ]}>
-              
-            </Modal>
-        </div>
-    );
+          <Col span={24} style={{ textAlign: "center" }}>
+            <Form.Item wrapperCol={{ span: 24 }}>
+              {USER_PERMISSION === "write" ? (
+                <Button
+                  type="primary"
+                  loading={loading}
+                  style={{ background: "#ffc53d" }}
+                  htmlType="submit"
+                >
+                  Update
+                </Button>
+              ) : (
+                ""
+              )}
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+      <Modal
+        onCancel={handleOk}
+        title={titleModal}
+        open={formPopup}
+        footer={[
+          <Button key="link" type="default">
+            <Link to="/heroes">Go To List Heroes</Link>
+          </Button>,
+          <Button key="close" type="primary" onClick={handleOk}>
+            Close
+          </Button>,
+        ]}
+      ></Modal>
+    </div>
+  );
 };
 
 export default EditHero;

@@ -1,6 +1,31 @@
-export type HeroClass = "Warrior" | "Mage" | "Rogue" | "Priest"
+export type HeroClass = "Warrior" | "Mage" | "Rogue" | "Priest" | "Paladin" | "Shaman"
 
-export const HERO_CLASS_LIST: HeroClass[] = ["Warrior" , "Mage" , "Rogue" , "Priest"]
+export const HERO_CLASS_LIST= [
+  {
+    name: "Warrior",
+    value: "volcano"
+  },
+  {
+    name: "Mage",
+    value: "purple"
+  },
+  {
+    name: "Rogue",
+    value: "blue"
+  },
+  {
+    name: "Priest",
+    value: "gold"
+  },
+  {
+    name: "Paladin",
+    value: "lime"
+  },
+  {
+    name: "Shaman",
+    value: "magenta"
+  }
+  ]
 
 
 export const USER_PERMISSION = window.appLocalize.user_permission
@@ -35,6 +60,17 @@ export type HeroClassColors = Record<HeroClass, {
 }>
 
 export type HeroType = Hero
+
+export type  HeroDataModel = {
+  hero_data: HeroModel[],
+  total_data: number
+}
+
+export const CHECK_NONCE = {
+  headers:{
+    'X-WP-Nonce': window.appLocalize.hero_nonce
+  }
+}
 
 
 declare global {
