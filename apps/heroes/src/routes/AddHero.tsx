@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   Form,
@@ -12,20 +12,16 @@ import {
   Tag,
   Modal,
   FormItemProps,
-} from "antd";
-import {
-  HERO_CLASS_LIST,
-  HeroType,
-  USER_PERMISSION,
-} from "../libtypes/heros.type";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { handleAddHero } from "../service/HeroApi.Service";
-import useMutationHero from "../components/useMutationHero";
+} from 'antd';
+import { HERO_CLASS_LIST, HeroType, USER_PERMISSION } from '../libtypes/heros.type';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { handleAddHero } from '../service/HeroApi.Service';
+import useMutationHero from '../components/useMutationHero';
 import {
   HeroClassInput,
   MyFormItem,
   MyFormItemGroup,
-} from "../components/form/HeroCustomFormGroup";
+} from '../components/form/HeroCustomFormGroup';
 interface MyFormItemGroupProps {
   prefix: string | number | (string | number)[];
   children: React.ReactNode;
@@ -66,19 +62,17 @@ const AddHero = () => {
   const postDataMutate = useMutation({
     mutationFn: handlePostData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["list-hero"] });
+      queryClient.invalidateQueries({ queryKey: ['list-hero'] });
     },
   });
 
   return (
     <div>
-      <p style={{ width: "100%", fontWeight: "bold", marginBottom: 20 }}>
-        New Hero
-      </p>
+      <p style={{ width: '100%', fontWeight: 'bold', marginBottom: 20 }}>New Hero</p>
       <Button type="primary">
         <Link to="/heroes">Back</Link>
       </Button>
-      {USER_PERMISSION === "write" ? (
+      {USER_PERMISSION === 'write' ? (
         <div>
           <Form
             name="add_hero"
@@ -94,9 +88,7 @@ const AddHero = () => {
                 <Form.Item
                   label="Name"
                   name="name"
-                  rules={[
-                    { required: true, message: "Please input Hero Name" },
-                  ]}
+                  rules={[{ required: true, message: 'Please input Hero Name' }]}
                 >
                   <Input />
                 </Form.Item>
@@ -104,7 +96,7 @@ const AddHero = () => {
                 <Form.Item
                   label="Class"
                   name="class"
-                  rules={[{ required: true, message: "Please pick an item!" }]}
+                  rules={[{ required: true, message: 'Please pick an item!' }]}
                 >
                   <HeroClassInput />
                 </Form.Item>
@@ -113,21 +105,19 @@ const AddHero = () => {
                   name="level"
                   initialValue={1}
                   label="Level"
-                  rules={[
-                    { required: true, message: "Please choose Hero Level" },
-                  ]}
+                  rules={[{ required: true, message: 'Please choose Hero Level' }]}
                 >
                   <InputNumber min={1} max={10} placeholder="1" />
                 </Form.Item>
               </Col>
 
               <Col span={24} md={12}>
-                <MyFormItemGroup prefix={["attributes"]}>
+                <MyFormItemGroup prefix={['attributes']}>
                   <MyFormItem
                     name="strength"
                     initialValue={10}
                     label="Strength"
-                    rules={[{ required: true, message: "Please choose value" }]}
+                    rules={[{ required: true, message: 'Please choose value' }]}
                   >
                     <Slider disabled={slideDisable} />
                   </MyFormItem>
@@ -135,7 +125,7 @@ const AddHero = () => {
                     name="dexterity"
                     initialValue={10}
                     label="Dexterity"
-                    rules={[{ required: true, message: "Please choose value" }]}
+                    rules={[{ required: true, message: 'Please choose value' }]}
                   >
                     <Slider disabled={slideDisable} />
                   </MyFormItem>
@@ -143,7 +133,7 @@ const AddHero = () => {
                     name="intelligence"
                     initialValue={10}
                     label="Intelligence"
-                    rules={[{ required: true, message: "Please choose value" }]}
+                    rules={[{ required: true, message: 'Please choose value' }]}
                   >
                     <Slider disabled={slideDisable} />
                   </MyFormItem>
@@ -151,25 +141,21 @@ const AddHero = () => {
                     name="vitality"
                     initialValue={10}
                     label="Vitality"
-                    rules={[{ required: true, message: "Please choose value" }]}
+                    rules={[{ required: true, message: 'Please choose value' }]}
                   >
                     <Slider disabled={slideDisable} />
                   </MyFormItem>
                 </MyFormItemGroup>
               </Col>
 
-              <Col span={24} style={{ textAlign: "center" }}>
+              <Col span={24} style={{ textAlign: 'center' }}>
                 <Form.Item wrapperCol={{ span: 24 }}>
-                  {USER_PERMISSION === "write" ? (
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      loading={isLoading}
-                    >
+                  {USER_PERMISSION === 'write' ? (
+                    <Button type="primary" htmlType="submit" loading={isLoading}>
                       Create Hero
                     </Button>
                   ) : (
-                    ""
+                    ''
                   )}
                 </Form.Item>
               </Col>
