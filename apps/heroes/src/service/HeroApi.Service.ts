@@ -1,5 +1,5 @@
 import React from 'react';
-import { CHECK_NONCE, HeroDataModel, HeroModel, HeroType } from '../libtypes/heros.type';
+import { CHECK_NONCE, HeroDataModel, HeroModel, Hero } from '../libtypes/heros.type';
 import axios from 'axios';
 
 const api_prefix: string = window.appLocalize.api_url;
@@ -16,13 +16,13 @@ export async function handleDeleteHero(hero_id: number) {
   return heroData;
 }
 
-export async function handleAddHero(dataHero: HeroType) {
+export async function handleAddHero(dataHero: Hero) {
   const api_url: string = `${api_prefix}yayhero/v1/heroes/add`;
   const heroData: { data: HeroDataModel } = await axios.post(api_url, dataHero, CHECK_NONCE);
   return heroData;
 }
 
-export async function handleUpdateHero(hero_id: string, data_hero: HeroType) {
+export async function handleUpdateHero(hero_id: string, data_hero: Hero) {
   const api_url: string = `${window.appLocalize.api_url}yayhero/v1/heroes/update/${hero_id}`;
   const dataRespon: { data: HeroModel } = await axios.put(api_url, data_hero, CHECK_NONCE);
   return dataRespon.data;

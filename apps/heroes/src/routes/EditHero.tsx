@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useHeroStore } from '../store/heroStore';
 import { Link } from 'react-router-dom';
 import { Button, Form, Input, Slider, Col, Row, InputNumber, Tag, Modal } from 'antd';
-import { HeroType, USER_PERMISSION } from '../libtypes/heros.type';
+import { Hero, USER_PERMISSION } from '../libtypes/heros.type';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { handleGetSingleHero } from '../service/HeroApi.Service';
 import useMutationHero from '../components/useMutationHero';
@@ -85,7 +85,7 @@ const EditHero = () => {
   });
 
   //update hero with call api
-  const updateData = async (value: HeroType) => {
+  const updateData = async (value: Hero) => {
     setformDisable(true);
     setLoading(true);
     if (heroId) {

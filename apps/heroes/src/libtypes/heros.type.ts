@@ -29,16 +29,11 @@ export const HERO_CLASS_LIST = [
 
 export const USER_PERMISSION = window.appLocalize.user_permission;
 
-interface Hero {
+export interface Hero {
   name: string;
   class: HeroClass;
   level: number;
-  attributes: {
-    strength: number;
-    dexterity: number;
-    intelligence: number;
-    vitality: number;
-  };
+  attributes: HeroAttributes;
 }
 
 export type HeroAttributes = {
@@ -60,8 +55,6 @@ export type HeroClassColors = Record<
     activeColor: string;
   }
 >;
-
-export type HeroType = Hero;
 
 export type HeroDataModel = {
   hero_data: HeroModel[];

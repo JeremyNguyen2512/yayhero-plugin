@@ -13,7 +13,7 @@ import {
   Modal,
   FormItemProps,
 } from 'antd';
-import { HERO_CLASS_LIST, HeroType, USER_PERMISSION } from '../libtypes/heros.type';
+import { HERO_CLASS_LIST, Hero, USER_PERMISSION } from '../libtypes/heros.type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleAddHero } from '../service/HeroApi.Service';
 import useMutationHero from '../components/useMutationHero';
@@ -48,7 +48,7 @@ const AddHero = () => {
   //add hero with call api
   const [form] = Form.useForm();
 
-  const handlePostData = async (value: HeroType) => {
+  const handlePostData = async (value: Hero) => {
     setformDisable(true);
     setIsLoading(true);
     await addMutation.mutateAsync(value);
