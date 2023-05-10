@@ -15,7 +15,7 @@ import {
 } from 'antd';
 import { HERO_CLASS_LIST, Hero, USER_PERMISSION } from '../libtypes/heros.type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleAddHero } from '../service/HeroApi.Service';
+import { handleAddHero } from '../service/heroApi';
 import useMutationHero from '../components/useMutationHero';
 import {
   HeroClassInput,

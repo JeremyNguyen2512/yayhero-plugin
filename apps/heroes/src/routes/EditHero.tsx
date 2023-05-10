@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button, Form, Input, Slider, Col, Row, InputNumber, Tag, Modal } from 'antd';
 import { Hero, USER_PERMISSION } from '../libtypes/heros.type';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { handleGetSingleHero } from '../service/HeroApi.Service';
+import { handleGetSingleHero } from '../service/heroApi';
 import useMutationHero from '../components/useMutationHero';
 import {
   HeroClassInput,

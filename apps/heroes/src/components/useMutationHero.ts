@@ -4,7 +4,7 @@ import {
   handleDeleteHero,
   handleUpdateHero,
   handleUpdateLevelHero,
-} from '../service/HeroApi.Service';
+} from '../service/heroApi';
 import { HeroDataModel, HeroModel, Hero } from '../libtypes/heros.type';
 import { useHeroCurrentPageStore } from '../store/heroStore';
 

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { handleGetSingleHero } from '../service/HeroApi.Service';
+import { handleGetSingleHero } from './heroApi';
 import { useHeroStore } from '../store/heroStore';
 
 export default function getHeroDatabyID(heroId: string | undefined) {

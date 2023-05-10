@@ -44,7 +44,6 @@ export type HeroAttributes = {
 };
 
 export type HeroModel = Hero & {
-  key: number;
   id: number;
 };
 
@@ -61,18 +60,12 @@ export type HeroDataModel = {
   total_data: number;
 };
 
-export const CHECK_NONCE = {
-  headers: {
-    'X-WP-Nonce': window.appLocalize.hero_nonce,
-  },
-};
-
 declare global {
   interface Window {
     appLocalize: {
       api_url: string;
       hero_nonce: string;
-      user_permission: string;
+      user_permission: 'read' | 'write';
     };
   }
 }

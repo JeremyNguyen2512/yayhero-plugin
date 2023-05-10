@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useHeroCurrentPageStore, useHeroStore } from '../store/heroStore';
-import { handleGetHero } from '../service/HeroApi.Service';
+import { handleGetHero } from '../service/heroApi';
 import { useState } from 'react';
 
 export default function useQueryHeroes() {

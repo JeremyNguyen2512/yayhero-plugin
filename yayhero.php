@@ -30,7 +30,7 @@ if (!wp_installing()) {
         function () {
             include YAY_HERO_PLUGIN_PATH . 'includes/pages/hero-admin.php';
             include YAY_HERO_PLUGIN_PATH . 'includes/enqueue/hero-app.php';
-            include YAY_HERO_PLUGIN_PATH . 'includes/classes/class-create-settings-routes.php';
+            include YAY_HERO_PLUGIN_PATH . 'includes/classes/class-rest-api.php';
             include YAY_HERO_PLUGIN_PATH . 'includes/classes/class-create-custom-post-type.php';
         }
     );
@@ -40,6 +40,7 @@ if (!wp_installing()) {
  * Add style to admin plugin
  */
 add_action('admin_enqueue_scripts', 'yayheros_admin_enqueue_scripts');
-function yayheros_admin_enqueue_scripts(){
-    wp_enqueue_style( 'yayheroes-style', YAY_HERO_PLUGIN_URL . 'assets/admin.css' );
+function yayheros_admin_enqueue_scripts()
+{
+    wp_enqueue_style('yayheroes-style', YAY_HERO_PLUGIN_URL . 'assets/admin.css');
 }
