@@ -12,7 +12,6 @@ import {
   MyFormItem,
   MyFormItemGroup,
 } from '../components/form/HeroCustomFormGroup';
-import getHeroDatabyID from '../service/GetHeroDataByID';
 
 const EditHero = () => {
   const { updateMutation } = useMutationHero();
@@ -61,26 +60,27 @@ const EditHero = () => {
     queryFn: () => {
       return heroId ? handleGetSingleHero(heroId) : null;
     },
-    onSuccess: (data) => {
-      if (data.length > 0) {
+    onSuccess: (hero) => {
+      if (hero) {
         form.setFieldsValue({
-          name: data[0]?.name,
-          class: data[0]?.class,
-          level: data[0]?.level,
+          name: hero?.name,
+          class: hero?.class,
+          level: hero?.level,
           attributes: {
-            strength: Number(data[0]?.attributes.strength),
-            dexterity: Number(data[0]?.attributes.dexterity),
-            intelligence: Number(data[0]?.attributes.intelligence),
-            vitality: Number(data[0]?.attributes.vitality),
+            strength: Number(hero?.attributes.strength),
+            dexterity: Number(hero?.attributes.dexterity),
+            intelligence: Number(hero?.attributes.intelligence),
+            vitality: Number(hero?.attributes.vitality),
           },
         });
         setformDisable(false);
-      } else {
-        setTitleModal('Hero Not Found!');
-        setFormPopup(true);
-        setformDisable(true);
-        setDisabled(true);
       }
+    },
+    onError: (error) => {
+      setTitleModal('Hero Not Found!');
+      setFormPopup(true);
+      setformDisable(true);
+      setDisabled(true);
     },
   });
 

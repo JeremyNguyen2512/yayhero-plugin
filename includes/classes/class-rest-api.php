@@ -88,31 +88,19 @@ if (!class_exists('YHR_REST_API')) {
         public function get_single_hero($request)
         {
             $hero_id = $request->get_param('heroid_param');
-            $args =  array(
-                'post_type'     => 'yay_hero',
-                'post_status'   => 'publish',
-                'p'             => $hero_id
+            $hero_post = get_post($hero_id);
+            if (empty($hero_post)) {
+                return new WP_Error('not_found', 'Hero Not Found', array('status' => 404));
+            }
+
+            return array(
+                'key'           => $hero_id,
+                'id'            => $hero_id,
+                'name'          => get_the_title($hero_id),
+                'class'         => get_post_meta($hero_id, 'class', true),
+                'level'         => get_post_meta($hero_id, 'level', true),
+                'attributes'    => get_post_meta($hero_id, 'attributes', true),
             );
-            $hero_posts = new WP_Query($args);
-            $data_hero = array();
-            if ($hero_posts->have_posts()) :
-                while ($hero_posts->have_posts()) : $hero_posts->the_post();
-                    $heroID = get_the_ID();
-                    $data = array(
-                        'key'           => $heroID,
-                        'id'            => $heroID,
-                        'name'          => get_the_title(),
-                        'class'         => get_post_meta($heroID, 'class', true),
-                        'level'         => get_post_meta($heroID, 'level', true),
-                        'attributes'    => get_post_meta($heroID, 'attributes', true),
-                    );
-
-                    array_push($data_hero, $data);
-                endwhile;
-                wp_reset_postdata();
-            endif;
-
-            return new WP_REST_Response($data_hero);
         }
 
         public function add_hero($request)
