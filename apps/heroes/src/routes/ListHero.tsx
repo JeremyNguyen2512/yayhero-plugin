@@ -37,8 +37,7 @@ const { Title } = Typography;
 const ListHero: React.FC = () => {
   const { page, pageSize, setPage, setPageSize } = useHeroCurrentPageStore();
   const heroesData = useQueryHeroes();
-  // const { deleteMutation, updateLevelMutation } =
-  //   useMutationHero();
+
   const deleteMutation = useDeleteMutation();
   const updateLevelMutation = useUpdateLevelMutation();
 

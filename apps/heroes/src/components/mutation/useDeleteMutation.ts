@@ -6,7 +6,6 @@ export default function useDeleteMutation() {
   const deleteMutation = useMutation({
     mutationFn: handleDeleteHero,
     onSuccess: () => {
-      console.log("delete mutation");
       queryClient.invalidateQueries({ queryKey: ["listHero"] });
     },
   });
