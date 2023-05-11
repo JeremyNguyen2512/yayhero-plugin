@@ -18,7 +18,7 @@ const EditHero = () => {
   const { heroId } = useParams();
   const [form] = Form.useForm<HeroModel>();
 
-  const { data: heroData, isLoading } = useQuery({
+  useQuery({
     queryKey: ['single-hero', heroId],
     queryFn: () => {
       if (!heroId) {
@@ -31,6 +31,7 @@ const EditHero = () => {
     },
     onSuccess: (hero) => {
       if (hero) {
+        form.setFieldsValue(hero);
         setSingleRowHeroSelect(hero);
       }
     },
@@ -38,9 +39,6 @@ const EditHero = () => {
       openNotification('Hero Not Found!');
     },
   });
-  if (heroData) {
-    form.setFieldsValue(heroData);
-  }
 
   // notification after update
   const [api, contextHolder] = notification.useNotification();
