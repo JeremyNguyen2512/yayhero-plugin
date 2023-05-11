@@ -19,10 +19,10 @@ import {
 import { ColumnsType } from "antd/es/table";
 import useQueryHeroes from "../components/useQueryHeroes";
 import useQueryHero from "../components/useQueryHero";
-import { useHeroCurrentPageStore } from "../store/heroStore";
-import useMutationHero from "../components/useMutationHero";
+import { useHeroCurrentPageStore } from "../store/heroCurrentPageStore";
 import { UpCircleOutlined } from "@ant-design/icons";
-import { useQueryClient } from "@tanstack/react-query";
+import useDeleteMutation from "../components/mutation/useDeleteMutation";
+import useUpdateLevelMutation from "../components/mutation/useUpdateLevelMutation";
 interface DataType {
   id: number;
   name: string;
@@ -36,17 +36,17 @@ const { Title } = Typography;
 //=======zustand logic
 const ListHero: React.FC = () => {
   const { page, pageSize, setPage, setPageSize } = useHeroCurrentPageStore();
-  const { heroesData, totalPage, isLoading, setListHero } = useQueryHeroes();
-  const { deleteMutation, updateLevelMutation } = useMutationHero();
-
-  const [updateLevelLoading, setUpdateLevelLoading] = useState<boolean>(false);
-  const [updateLevelDisable, setUpdateLevelDisable] = useState<boolean>(false);
+  const heroesData = useQueryHeroes();
+  // const { deleteMutation, updateLevelMutation } =
+  //   useMutationHero();
+  const deleteMutation = useDeleteMutation();
+  const updateLevelMutation = useUpdateLevelMutation();
 
   useEffect(() => {
-    if (heroesData?.length === 0 && page > 1) {
+    if (heroesData?.hero_data.length === 0 && page > 1) {
       setPage(page - 1);
     }
-  }, [heroesData]);
+  }, [heroesData, page]);
 
   const handleOnChange = (page: number, pageSize: number) => {
     setPage(page);
@@ -74,17 +74,13 @@ const ListHero: React.FC = () => {
   // };
   //end code up level heroes
 
-  const handleUpLevel = async (record: DataType) => {
-    setUpdateLevelLoading(true);
-    setUpdateLevelDisable(true);
-    const respon = await updateLevelMutation.mutateAsync({
+  const handleUpLevel = (record: DataType) => {
+    updateLevelMutation.mutateAsync({
       heroId: record.id,
       hero_level: {
         level: record.level + 1,
       },
     });
-    setUpdateLevelLoading(false);
-    setUpdateLevelDisable(false);
   };
 
   const { selectHero } = useQueryHero();
@@ -148,8 +144,8 @@ const ListHero: React.FC = () => {
                 onClick={() => {
                   handleUpLevel(record);
                 }}
-                loading={updateLevelLoading}
-                disabled={updateLevelDisable}
+                loading={updateLevelMutation.isLoading}
+                disabled={updateLevelMutation.isLoading}
               >
                 <UpCircleOutlined
                   style={{ fontSize: 18, marginLeft: 5, cursor: "pointer" }}
@@ -244,10 +240,9 @@ const ListHero: React.FC = () => {
       </Space.Compact>
       <Table
         rowSelection={rowSelection}
-        dataSource={heroesData}
+        dataSource={heroesData?.hero_data}
         columns={columns}
         pagination={false}
-        loading={isLoading}
         onRow={(record) => ({
           onClick: () => {
             selectHero(record as HeroModel);
@@ -258,7 +253,7 @@ const ListHero: React.FC = () => {
         showSizeChanger
         current={page}
         defaultPageSize={pageSize}
-        total={totalPage}
+        total={heroesData?.total_data}
         pageSizeOptions={[5, 10, 15, 20]}
         style={{ marginTop: 30 }}
         onChange={(page, pageSize) => {
