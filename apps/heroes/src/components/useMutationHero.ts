@@ -1,40 +1,35 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   handleAddHero,
   handleDeleteHero,
   handleUpdateHero,
   handleUpdateLevelHero,
-} from "../service/heroApi";
-import { HeroModel, Hero } from "../libtypes/heros.type";
+} from '../service/heroApi';
+import { HeroModel, Hero } from '../libtypes/heros.type';
 
 export default function useMutationHero() {
   const queryClient = useQueryClient();
 
-  const updateMutation = useMutation<
-    HeroModel,
-    unknown,
-    { heroId: string; hero_data: Hero }
-  >({
-    mutationFn: ({ heroId, hero_data }) =>
-      handleUpdateHero(heroId as string, hero_data),
+  const updateMutation = useMutation<HeroModel, unknown, { heroId: string; hero_data: Hero }>({
+    mutationFn: ({ heroId, hero_data }) => handleUpdateHero(heroId as string, hero_data),
     onSuccess: (data) => {
-      queryClient.setQueryData(["single-hero", data.id], data);
-      queryClient.invalidateQueries({ queryKey: ["listHero"] });
+      queryClient.setQueryData(['single-hero', data.id], data);
+      queryClient.invalidateQueries({ queryKey: ['listHero'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: handleDeleteHero,
     onSuccess: () => {
-      console.log("delete mutation");
-      queryClient.invalidateQueries({ queryKey: ["listHero"] });
+      console.log('delete mutation');
+      queryClient.invalidateQueries({ queryKey: ['listHero'] });
     },
   });
 
   const addMutation = useMutation({
     mutationFn: handleAddHero,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["listHero"] });
+      queryClient.invalidateQueries({ queryKey: ['listHero'] });
     },
   });
 
@@ -43,12 +38,11 @@ export default function useMutationHero() {
     unknown,
     { heroId: number; hero_level: { level: number } }
   >({
-    mutationFn: ({ heroId, hero_level }) =>
-      handleUpdateLevelHero(heroId, hero_level),
+    mutationFn: ({ heroId, hero_level }) => handleUpdateLevelHero(heroId, hero_level),
     onSuccess: (data) => {
-      console.log("update level");
-      queryClient.setQueryData(["single-hero", data.id], data);
-      queryClient.invalidateQueries({ queryKey: ["listHero"] });
+      console.log('update level');
+      queryClient.setQueryData(['single-hero', data.id], data);
+      queryClient.invalidateQueries({ queryKey: ['listHero'] });
     },
   });
 

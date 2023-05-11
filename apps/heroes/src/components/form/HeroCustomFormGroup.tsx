@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Form, FormInstance, FormItemProps, Radio, Slider, Tag } from "antd";
-import { HERO_CLASS_LIST, HeroModel } from "../../libtypes/heros.type";
+import React, { useEffect, useState } from 'react';
+import { Form, FormInstance, FormItemProps, Radio, Slider, Tag } from 'antd';
+import { HERO_CLASS_LIST, HeroModel } from '../../libtypes/heros.type';
 
 interface HeroClassInputProps {
   value?: string;
@@ -25,12 +25,12 @@ export const HeroClassInput: React.FC<HeroClassInputProps> = ({
       {HERO_CLASS_LIST.map((item) => {
         return (
           <Tag
-            className={item.name === heroClass ? "active" : ""}
+            className={item.name === heroClass ? 'active' : ''}
             style={{
-              padding: "5px 10px",
-              border: "1px solid #d5d5d5",
+              padding: '5px 10px',
+              border: '1px solid #d5d5d5',
               marginBottom: 10,
-              cursor: "pointer",
+              cursor: 'pointer',
             }}
             key={item.name}
             color={item.value}

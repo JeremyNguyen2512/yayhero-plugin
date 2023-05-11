@@ -23,7 +23,7 @@ function yayhero_register_entry()
         3
     );
 
-    $user_permission = current_user_can('manage_options')?'write':'read';
+    $user_permission = current_user_can('manage_options') ? 'write' : 'read';
 
     wp_register_script("module/yayhero/main.tsx", "http://localhost:3000/main.tsx", ['react', 'react-dom'], null, true); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
     wp_enqueue_script("module/yayhero/main.tsx");

@@ -1,17 +1,8 @@
-import { Link } from "react-router-dom";
-import {
-  Button,
-  Form,
-  Input,
-  Slider,
-  Col,
-  Row,
-  InputNumber,
-  notification,
-} from "antd";
-import { Hero, USER_PERMISSION } from "../libtypes/heros.type";
-import { HeroClassInput } from "../components/form/HeroCustomFormGroup";
-import useAddMutation from "../components/mutation/useAddMutation";
+import { Link } from 'react-router-dom';
+import { Button, Form, Input, Slider, Col, Row, InputNumber, notification } from 'antd';
+import { Hero, USER_PERMISSION } from '../libtypes/heros.type';
+import { HeroClassInput } from '../components/form/HeroCustomFormGroup';
+import useAddMutation from '../components/mutation/useAddMutation';
 
 const AddHero = () => {
   const addMutation = useAddMutation();
@@ -22,7 +13,7 @@ const AddHero = () => {
   const openNotification = (title: string) => {
     api.open({
       message: title,
-      placement: "bottomRight",
+      placement: 'bottomRight',
     });
   };
 
@@ -31,19 +22,17 @@ const AddHero = () => {
 
   const addHero = async (value: Hero) => {
     await addMutation.mutateAsync(value);
-    openNotification("Add Hero Success!");
+    openNotification('Add Hero Success!');
     form.resetFields();
   };
 
   return (
     <div>
-      <p style={{ width: "100%", fontWeight: "bold", marginBottom: 20 }}>
-        New Hero
-      </p>
+      <p style={{ width: '100%', fontWeight: 'bold', marginBottom: 20 }}>New Hero</p>
       <Link to="/heroes">
         <Button type="primary">Back</Button>
       </Link>
-      {USER_PERMISSION === "write" ? (
+      {USER_PERMISSION === 'write' ? (
         <div>
           <Form
             name="add_hero"
@@ -67,9 +56,7 @@ const AddHero = () => {
                 <Form.Item
                   label="Name"
                   name="name"
-                  rules={[
-                    { required: true, message: "Please input Hero Name" },
-                  ]}
+                  rules={[{ required: true, message: 'Please input Hero Name' }]}
                 >
                   <Input />
                 </Form.Item>
@@ -77,7 +64,7 @@ const AddHero = () => {
                 <Form.Item
                   label="Class"
                   name="class"
-                  rules={[{ required: true, message: "Please pick an item!" }]}
+                  rules={[{ required: true, message: 'Please pick an item!' }]}
                 >
                   <HeroClassInput />
                 </Form.Item>
@@ -86,44 +73,35 @@ const AddHero = () => {
                   name="level"
                   initialValue={1}
                   label="Level"
-                  rules={[
-                    { required: true, message: "Please choose Hero Level" },
-                  ]}
+                  rules={[{ required: true, message: 'Please choose Hero Level' }]}
                 >
                   <InputNumber min={1} max={10} placeholder="1" />
                 </Form.Item>
               </Col>
 
               <Col span={24} md={12}>
-                <Form.Item name={["attributes", "strength"]} label="Strength">
+                <Form.Item name={['attributes', 'strength']} label="Strength">
                   <Slider></Slider>
                 </Form.Item>
-                <Form.Item name={["attributes", "dexterity"]} label="Dexterity">
+                <Form.Item name={['attributes', 'dexterity']} label="Dexterity">
                   <Slider></Slider>
                 </Form.Item>
-                <Form.Item
-                  name={["attributes", "intelligence"]}
-                  label="Intelligence"
-                >
+                <Form.Item name={['attributes', 'intelligence']} label="Intelligence">
                   <Slider></Slider>
                 </Form.Item>
-                <Form.Item name={["attributes", "vitality"]} label="Vitality">
+                <Form.Item name={['attributes', 'vitality']} label="Vitality">
                   <Slider></Slider>
                 </Form.Item>
               </Col>
 
-              <Col span={24} style={{ textAlign: "center" }}>
+              <Col span={24} style={{ textAlign: 'center' }}>
                 <Form.Item wrapperCol={{ span: 24 }}>
-                  {USER_PERMISSION === "write" ? (
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      loading={addMutation.isLoading}
-                    >
+                  {USER_PERMISSION === 'write' ? (
+                    <Button type="primary" htmlType="submit" loading={addMutation.isLoading}>
                       Create Hero
                     </Button>
                   ) : (
-                    ""
+                    ''
                   )}
                 </Form.Item>
               </Col>

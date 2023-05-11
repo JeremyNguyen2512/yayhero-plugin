@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Tag,
-  Button,
-  Space,
-  Popconfirm,
-  Pagination,
-  Typography,
-} from "antd";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Table, Tag, Button, Space, Popconfirm, Pagination, Typography } from 'antd';
+import { Link } from 'react-router-dom';
 import {
   HERO_CLASS_LIST,
   HeroAttributes,
   HeroClass,
   HeroModel,
   USER_PERMISSION,
-} from "../libtypes/heros.type";
-import { ColumnsType } from "antd/es/table";
-import useQueryHeroes from "../components/useQueryHeroes";
-import useQueryHero from "../components/useQueryHero";
-import { useHeroCurrentPageStore } from "../store/heroCurrentPageStore";
-import { UpCircleOutlined } from "@ant-design/icons";
-import useDeleteMutation from "../components/mutation/useDeleteMutation";
-import useUpdateLevelMutation from "../components/mutation/useUpdateLevelMutation";
+} from '../libtypes/heros.type';
+import { ColumnsType } from 'antd/es/table';
+import useQueryHeroes from '../components/useQueryHeroes';
+import useQueryHero from '../components/useQueryHero';
+import { useHeroCurrentPageStore } from '../store/heroCurrentPageStore';
+import { UpCircleOutlined } from '@ant-design/icons';
+import useDeleteMutation from '../components/mutation/useDeleteMutation';
+import useUpdateLevelMutation from '../components/mutation/useUpdateLevelMutation';
 interface DataType {
   id: number;
   name: string;
@@ -87,68 +79,55 @@ const ListHero: React.FC = () => {
   //set column of table column
   const columns: ColumnsType<DataType> = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a: { name: string }, b: { name: string }) =>
-        a.name.localeCompare(b.name) * -1,
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      sorter: (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name) * -1,
       render: (name: string, record: { id: number }) => {
         return (
-          <Link
-            to={USER_PERMISSION === "write" ? `/heroes/edit/${record.id}` : ""}
-          >
-            {name}
-          </Link>
+          <Link to={USER_PERMISSION === 'write' ? `/heroes/edit/${record.id}` : ''}>{name}</Link>
         );
       },
     },
     {
-      title: "Class",
-      dataIndex: "class",
-      key: "class",
+      title: 'Class',
+      dataIndex: 'class',
+      key: 'class',
       filters: HERO_CLASS_LIST.map((item) => ({
         text: item.name,
         value: item.name,
       })),
-      onFilter: (
-        value: string | number | boolean,
-        record: { class: string }
-      ) => {
+      onFilter: (value: string | number | boolean, record: { class: string }) => {
         return record.class.indexOf(value.toString()) === 0;
       },
     },
     {
-      title: "Level",
-      dataIndex: "level",
-      key: "level",
+      title: 'Level',
+      dataIndex: 'level',
+      key: 'level',
       render: (level: number, record: DataType) => {
         return (
           <div>
-            <Title
-              level={2}
-              style={{ color: "#003a8c", margin: 0, display: "inline-block" }}
-            >
+            <Title level={2} style={{ color: '#003a8c', margin: 0, display: 'inline-block' }}>
               {level}
             </Title>
             {level === 10 ? (
-              ""
+              ''
             ) : (
               <Button
-                style={{ border: "none", padding: 0, background: "unset" }}
+                style={{ border: 'none', padding: 0, background: 'unset' }}
                 onClick={() => {
                   handleUpLevel(record);
                 }}
                 loading={updateLevelMutation.isLoading}
                 disabled={updateLevelMutation.isLoading}
               >
-                <UpCircleOutlined
-                  style={{ fontSize: 18, marginLeft: 5, cursor: "pointer" }}
-                />
+                <UpCircleOutlined style={{ fontSize: 18, marginLeft: 5, cursor: 'pointer' }} />
               </Button>
             )}
           </div>
@@ -156,29 +135,29 @@ const ListHero: React.FC = () => {
       },
     },
     {
-      title: "Attributes",
-      dataIndex: "attributes",
-      key: "attributes",
+      title: 'Attributes',
+      dataIndex: 'attributes',
+      key: 'attributes',
       render: (attributes: any[], record: { id: number }) => {
         const tags = [];
         for (const [key, attribute] of Object.entries(attributes)) {
           let color;
-          if (key === "strength") {
-            color = "gold";
+          if (key === 'strength') {
+            color = 'gold';
           }
-          if (key === "dexterity") {
-            color = "red";
+          if (key === 'dexterity') {
+            color = 'red';
           }
-          if (key === "intelligence") {
-            color = "blue";
+          if (key === 'intelligence') {
+            color = 'blue';
           }
-          if (key === "vitality") {
-            color = "cyan";
+          if (key === 'vitality') {
+            color = 'cyan';
           }
           tags.push(
             <Tag color={color} key={record.id + key}>
               {`${key}: ${attribute}`}
-            </Tag>
+            </Tag>,
           );
         }
         return (
@@ -190,10 +169,10 @@ const ListHero: React.FC = () => {
     },
 
     {
-      title: "Action",
-      key: "action",
+      title: 'Action',
+      key: 'action',
       render: (record: { id: number }) =>
-        USER_PERMISSION === "write" ? (
+        USER_PERMISSION === 'write' ? (
           <Popconfirm
             placement="left"
             title="Are you sure to delete this Hero?"
@@ -208,7 +187,7 @@ const ListHero: React.FC = () => {
             </Button>
           </Popconfirm>
         ) : (
-          ""
+          ''
         ),
     },
   ];
@@ -227,16 +206,16 @@ const ListHero: React.FC = () => {
 
   return (
     <div>
-      <Space.Compact block style={{ marginBottom: 16, alignItems: "center" }}>
-        <span style={{ width: "100%", fontWeight: "bold" }}>Heroes</span>
-        {USER_PERMISSION === "write" ? (
+      <Space.Compact block style={{ marginBottom: 16, alignItems: 'center' }}>
+        <span style={{ width: '100%', fontWeight: 'bold' }}>Heroes</span>
+        {USER_PERMISSION === 'write' ? (
           <Link to="/heroes/add">
-            <Button type="primary" style={{ borderRadius: "6px" }}>
+            <Button type="primary" style={{ borderRadius: '6px' }}>
               Add Heroes
             </Button>
           </Link>
         ) : (
-          ""
+          ''
         )}
       </Space.Compact>
       <Table

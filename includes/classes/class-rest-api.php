@@ -3,9 +3,9 @@
 /**
  * This file will create react setting routes
  */
-if (!class_exists('WP_Create_React_Settings_Routes')) {
+if (!class_exists('YHR_REST_API')) {
 
-    class WP_Create_React_Settings_Routes
+    class YHR_REST_API
     {
         public function __construct()
         {
@@ -14,37 +14,37 @@ if (!class_exists('WP_Create_React_Settings_Routes')) {
 
         public function create_rest_route()
         {
-            register_rest_route('yayhero/v1', '/heroes/list', [
+            register_rest_route('yayhero/v1', '/heroes', [
                 'method'                => 'GET',
                 'callback'              => [$this, 'get_list_hero'],
                 'permission_callback'   => [$this, 'get_hero_permission'],
             ]);
 
-            register_rest_route('yayhero/v1', '/heroes/add', array(
+            register_rest_route('yayhero/v1', '/heroes', array(
                 'methods' => 'POST',
                 'callback' => [$this, 'add_hero'],
                 'permission_callback'   => [$this, 'update_hero_permission'],
             ));
 
-            register_rest_route('yayhero/v1', '/heroes/delete/(?P<heroid_param>\d+)', array(
+            register_rest_route('yayhero/v1', '/heroes/(?P<heroid_param>\d+)', array(
                 'methods' => 'DELETE',
                 'callback' => [$this, 'delete_hero'],
                 'permission_callback'   => [$this, 'update_hero_permission'],
             ));
 
-            register_rest_route('yayhero/v1', '/heroes/update/(?P<heroid_param>\d+)', array(
+            register_rest_route('yayhero/v1', '/heroes/(?P<heroid_param>\d+)', array(
                 'methods' => 'PUT',
                 'callback' => [$this, 'update_hero'],
                 'permission_callback'   => [$this, 'update_hero_permission'],
             ));
 
-            register_rest_route('yayhero/v1', '/heroes/update-level/(?P<heroid_param>\d+)', array(
+            register_rest_route('yayhero/v1', '/heroes/(?P<heroid_param>\d+)/update-level', array(
                 'methods' => 'PUT',
                 'callback' => [$this, 'update_hero_level'],
                 'permission_callback'   => [$this, 'update_hero_permission'],
             ));
 
-            register_rest_route('yayhero/v1', '/heroes/single/(?P<heroid_param>\d+)', array(
+            register_rest_route('yayhero/v1', '/heroes/(?P<heroid_param>\d+)', array(
                 'methods' => 'GET',
                 'callback' => [$this, 'get_single_hero'],
                 'permission_callback'   => [$this, 'get_hero_permission'],
@@ -53,9 +53,6 @@ if (!class_exists('WP_Create_React_Settings_Routes')) {
 
         public function get_list_hero($request)
         {
-
-            $this->verify_request_api($request);
-
             $posts_per_page = (int)$request['posts_per_page'];
             $paged = (int)$request['paged'];
 
@@ -90,47 +87,24 @@ if (!class_exists('WP_Create_React_Settings_Routes')) {
 
         public function get_single_hero($request)
         {
-
-            // $this->verify_request_api($request);
-
             $hero_id = $request->get_param('heroid_param');
-            $args =  array(
-                'post_type'     => 'yay_hero',
-                'post_status'   => 'publish',
-                'p'             => $hero_id
+            $hero_post = get_post($hero_id);
+            if (empty($hero_post)) {
+                return new WP_Error('not_found', 'Hero Not Found', array('status' => 404));
+            }
+
+            return array(
+                'key'           => $hero_id,
+                'id'            => $hero_id,
+                'name'          => get_the_title($hero_id),
+                'class'         => get_post_meta($hero_id, 'class', true),
+                'level'         => get_post_meta($hero_id, 'level', true),
+                'attributes'    => get_post_meta($hero_id, 'attributes', true),
             );
-            $hero_posts = new WP_Query($args);
-            $data_hero = array();
-            if ($hero_posts->have_posts()) :
-                while ($hero_posts->have_posts()) : $hero_posts->the_post();
-                    $heroID = get_the_ID();
-                    $data = array(
-                        'key'           => $heroID,
-                        'id'            => $heroID,
-                        'name'          => get_the_title(),
-                        'class'         => get_post_meta($heroID, 'class', true),
-                        'level'         => get_post_meta($heroID, 'level', true),
-                        'attributes'    => get_post_meta($heroID, 'attributes', true),
-                    );
-
-                    array_push($data_hero, $data);
-                endwhile;
-                wp_reset_postdata();
-            endif;
-
-            return new WP_REST_Response($data_hero);
-        }
-
-        public function get_hero_permission()
-        {
-            return current_user_can('read');
         }
 
         public function add_hero($request)
         {
-
-            $this->verify_request_api($request);
-
             $newAttributes = array();
             $attributes = $request['attributes'];
             if (is_array($attributes)) {
@@ -158,16 +132,11 @@ if (!class_exists('WP_Create_React_Settings_Routes')) {
                 add_post_meta($post_id, 'level', sanitize_text_field($request['level']));
                 add_post_meta($post_id, 'attributes', $newAttributes);
             }
-            $status = 'success';
-            $mess = 'HeroID is ' . $post_id;
-            return new WP_REST_Response($status);
+            return new WP_REST_Response($post_id);
         }
 
         public function update_hero($request)
         {
-
-            $this->verify_request_api($request);
-
             $newAttributes = array();
             $attributes = $request['attributes'];
             if (is_array($attributes)) {
@@ -192,18 +161,17 @@ if (!class_exists('WP_Create_React_Settings_Routes')) {
                 'post_title'    => sanitize_text_field($request['name']),
             );
 
-            $respon_id =  wp_update_post($args);
-            update_post_meta($respon_id, 'class', sanitize_text_field($request['class']));
-            update_post_meta($respon_id, 'level', sanitize_text_field($request['level']));
-            update_post_meta($respon_id, 'attributes', $newAttributes);
+            $post_id =  wp_update_post($args);
+            update_post_meta($post_id, 'class', sanitize_text_field($request['class']));
+            update_post_meta($post_id, 'level', sanitize_text_field($request['level']));
+            update_post_meta($post_id, 'attributes', $newAttributes);
 
             $data = array(
-                'key'           => $respon_id,
-                'id'            => $respon_id,
-                'name'          => get_the_title($respon_id),
-                'class'         => get_post_meta($respon_id, 'class', true),
-                'level'         => get_post_meta($respon_id, 'level', true),
-                'attributes'    => get_post_meta($respon_id, 'attributes', true),
+                'id'            => $post_id,
+                'name'          => get_the_title($post_id),
+                'class'         => get_post_meta($post_id, 'class', true),
+                'level'         => get_post_meta($post_id, 'level', true),
+                'attributes'    => get_post_meta($post_id, 'attributes', true),
             );
 
             return new WP_REST_Response($data);
@@ -211,51 +179,51 @@ if (!class_exists('WP_Create_React_Settings_Routes')) {
 
         public function update_hero_level($request)
         {
-            $this->verify_request_api($request);
             $hero_level = $request['level'];
             $hero_id = $request->get_param('heroid_param');
-            if (get_post($hero_id)) {
-                update_post_meta($hero_id, 'level', $hero_level);
-                $respon = array(
-                    'key'           => $hero_id,
-                    'id'            => $hero_id,
-                    'name'          => get_the_title($hero_id),
-                    'class'         => get_post_meta($hero_id, 'class', true),
-                    'level'         => get_post_meta($hero_id, 'level', true),
-                    'attributes'    => get_post_meta($hero_id, 'attributes', true),
-                );
-            } else {
-                $respon = 'error';
+
+            $hero_post = get_post($hero_id);
+            if (empty($hero_post)) {
+                return new WP_Error('not_found', 'Hero Not Found', array('status' => 404));
             }
 
-            return new WP_REST_Response($respon);
+            update_post_meta($hero_id, 'level', $hero_level);
+            return array(
+                'key'           => $hero_id,
+                'id'            => $hero_id,
+                'name'          => get_the_title($hero_id),
+                'class'         => get_post_meta($hero_id, 'class', true),
+                'level'         => get_post_meta($hero_id, 'level', true),
+                'attributes'    => get_post_meta($hero_id, 'attributes', true),
+            );
         }
 
         public function delete_hero($request)
         {
-
-            $this->verify_request_api($request);
-
             $hero_id = $request->get_param('heroid_param');
 
-            $respon = wp_delete_post($hero_id, true);
-            return new WP_REST_Response($respon);
+            $result = wp_delete_post($hero_id, true);
+            if (null === $result || false === $result) {
+                return new WP_Error(
+                    'cant_delete',
+                    __('Something went wrong', 'yay_hero'),
+                    array('status' => 500)
+                );
+            }
+
+            return new WP_REST_Response($hero_id);
+        }
+
+        public function get_hero_permission()
+        {
+            return current_user_can('read');
         }
 
         public function update_hero_permission()
         {
             return current_user_can('manage_options');
         }
-
-        public function verify_request_api($request)
-        {
-            $request_header = $request->get_headers();
-            $checkNonce = $request_header['x_wp_nonce'][0];
-            if (!wp_verify_nonce((string) $checkNonce, 'wp_rest')) {
-                return 'Invalid nonce field';
-            }
-        }
     }
 
-    new WP_Create_React_Settings_Routes();
+    new YHR_REST_API();
 }

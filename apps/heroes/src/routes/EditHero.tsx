@@ -1,23 +1,14 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useHeroStore } from "../store/heroStore";
-import { Link } from "react-router-dom";
-import {
-  Button,
-  Form,
-  Input,
-  Slider,
-  Col,
-  Row,
-  InputNumber,
-  notification,
-} from "antd";
-import { Hero, HeroModel, USER_PERMISSION } from "../libtypes/heros.type";
-import { isError, useQuery } from "@tanstack/react-query";
-import { handleGetSingleHero } from "../service/heroApi";
-import { HeroClassInput } from "../components/form/HeroCustomFormGroup";
-import useUpdateMutation from "../components/mutation/useUpdateMutation";
-import { CheckOutlined } from "@ant-design/icons";
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useHeroStore } from '../store/heroStore';
+import { Link } from 'react-router-dom';
+import { Button, Form, Input, Slider, Col, Row, InputNumber, notification } from 'antd';
+import { Hero, HeroModel, USER_PERMISSION } from '../libtypes/heros.type';
+import { isError, useQuery } from '@tanstack/react-query';
+import { handleGetSingleHero } from '../service/heroApi';
+import { HeroClassInput } from '../components/form/HeroCustomFormGroup';
+import useUpdateMutation from '../components/mutation/useUpdateMutation';
+import { CheckOutlined } from '@ant-design/icons';
 
 const EditHero = () => {
   const updateMutation = useUpdateMutation();
@@ -28,7 +19,7 @@ const EditHero = () => {
   const [form] = Form.useForm<HeroModel>();
 
   const { data: heroData, isLoading } = useQuery({
-    queryKey: ["single-hero", heroId],
+    queryKey: ['single-hero', heroId],
     queryFn: () => {
       if (!heroId) {
         return undefined;
@@ -44,7 +35,7 @@ const EditHero = () => {
       }
     },
     onError: (error) => {
-      openNotification("Hero Not Found!");
+      openNotification('Hero Not Found!');
     },
   });
   if (heroData) {
@@ -57,7 +48,7 @@ const EditHero = () => {
   const openNotification = (title: string) => {
     api.open({
       message: title,
-      placement: "bottomRight",
+      placement: 'bottomRight',
     });
   };
 
@@ -65,18 +56,16 @@ const EditHero = () => {
   const updateHero = async (value: Hero) => {
     if (heroId) {
       await updateMutation.mutateAsync({ heroId: heroId, hero_data: value });
-      openNotification("Update Hero Success!");
+      openNotification('Update Hero Success!');
     }
   };
   return (
     <div>
-      <p style={{ width: "100%", fontWeight: "bold", marginBottom: 20 }}>
-        Edit Hero
-      </p>
+      <p style={{ width: '100%', fontWeight: 'bold', marginBottom: 20 }}>Edit Hero</p>
       <Link to="/heroes">
         <Button type="primary">Back</Button>
       </Link>
-      {USER_PERMISSION === "write" ? (
+      {USER_PERMISSION === 'write' ? (
         <div>
           <Form
             name="add_hero"
@@ -92,9 +81,7 @@ const EditHero = () => {
                 <Form.Item
                   label="Name"
                   name="name"
-                  rules={[
-                    { required: true, message: "Please input Hero Name" },
-                  ]}
+                  rules={[{ required: true, message: 'Please input Hero Name' }]}
                 >
                   <Input />
                 </Form.Item>
@@ -102,7 +89,7 @@ const EditHero = () => {
                 <Form.Item
                   label="Class"
                   name="class"
-                  rules={[{ required: true, message: "Please pick an item!" }]}
+                  rules={[{ required: true, message: 'Please pick an item!' }]}
                 >
                   <HeroClassInput />
                 </Form.Item>
@@ -110,45 +97,40 @@ const EditHero = () => {
                 <Form.Item
                   name="level"
                   label="Level"
-                  rules={[
-                    { required: true, message: "Please choose Hero Level" },
-                  ]}
+                  rules={[{ required: true, message: 'Please choose Hero Level' }]}
                 >
                   <InputNumber min={1} max={10} placeholder="1" />
                 </Form.Item>
               </Col>
 
               <Col span={24} md={12}>
-                <Form.Item name={["attributes", "strength"]} label="Strength">
+                <Form.Item name={['attributes', 'strength']} label="Strength">
                   <Slider></Slider>
                 </Form.Item>
-                <Form.Item name={["attributes", "dexterity"]} label="Dexterity">
+                <Form.Item name={['attributes', 'dexterity']} label="Dexterity">
                   <Slider></Slider>
                 </Form.Item>
-                <Form.Item
-                  name={["attributes", "intelligence"]}
-                  label="Intelligence"
-                >
+                <Form.Item name={['attributes', 'intelligence']} label="Intelligence">
                   <Slider></Slider>
                 </Form.Item>
-                <Form.Item name={["attributes", "vitality"]} label="Vitality">
+                <Form.Item name={['attributes', 'vitality']} label="Vitality">
                   <Slider></Slider>
                 </Form.Item>
               </Col>
 
-              <Col span={24} style={{ textAlign: "center" }}>
+              <Col span={24} style={{ textAlign: 'center' }}>
                 <Form.Item wrapperCol={{ span: 24 }}>
-                  {USER_PERMISSION === "write" ? (
+                  {USER_PERMISSION === 'write' ? (
                     <Button
                       type="primary"
                       loading={updateMutation.isLoading}
-                      style={{ background: "#ffc53d" }}
+                      style={{ background: '#ffc53d' }}
                       htmlType="submit"
                     >
                       Update
                     </Button>
                   ) : (
-                    ""
+                    ''
                   )}
                 </Form.Item>
               </Col>
