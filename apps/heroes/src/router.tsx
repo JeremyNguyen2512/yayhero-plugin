@@ -1,5 +1,3 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { createHashRouter } from 'react-router-dom';
 import EditHero from './routes/EditHero';
 import AddHero from './routes/AddHero';

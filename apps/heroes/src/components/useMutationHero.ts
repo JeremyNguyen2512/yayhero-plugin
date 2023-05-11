@@ -5,8 +5,7 @@ import {
   handleUpdateHero,
   handleUpdateLevelHero,
 } from '../service/heroApi';
-import { HeroDataModel, HeroModel, Hero } from '../libtypes/heros.type';
-import { useHeroCurrentPageStore } from '../store/heroStore';
+import { HeroModel, Hero } from '../libtypes/heros.type';
 
 export default function useMutationHero() {
   const queryClient = useQueryClient();
@@ -22,6 +21,7 @@ export default function useMutationHero() {
   const deleteMutation = useMutation({
     mutationFn: handleDeleteHero,
     onSuccess: () => {
+      console.log('delete mutation');
       queryClient.invalidateQueries({ queryKey: ['listHero'] });
     },
   });
@@ -40,10 +40,16 @@ export default function useMutationHero() {
   >({
     mutationFn: ({ heroId, hero_level }) => handleUpdateLevelHero(heroId, hero_level),
     onSuccess: (data) => {
+      console.log('update level');
       queryClient.setQueryData(['single-hero', data.id], data);
       queryClient.invalidateQueries({ queryKey: ['listHero'] });
     },
   });
 
-  return { deleteMutation, addMutation, updateMutation, updateLevelMutation };
+  return {
+    deleteMutation,
+    addMutation,
+    updateMutation,
+    updateLevelMutation,
+  };
 }
