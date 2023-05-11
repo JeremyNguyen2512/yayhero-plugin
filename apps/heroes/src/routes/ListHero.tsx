@@ -231,9 +231,11 @@ const ListHero: React.FC = () => {
       <Space.Compact block style={{ marginBottom: 16, alignItems: "center" }}>
         <span style={{ width: "100%", fontWeight: "bold" }}>Heroes</span>
         {USER_PERMISSION === "write" ? (
-          <Button type="primary" style={{ borderRadius: "6px" }}>
-            <Link to="/heroes/add">Add Heroes</Link>
-          </Button>
+          <Link to="/heroes/add">
+            <Button type="primary" style={{ borderRadius: "6px" }}>
+              Add Heroes
+            </Button>
+          </Link>
         ) : (
           ""
         )}

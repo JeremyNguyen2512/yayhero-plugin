@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useHeroStore } from "../store/heroStore";
 import { Link } from "react-router-dom";
@@ -10,97 +10,82 @@ import {
   Col,
   Row,
   InputNumber,
-  Tag,
-  Modal,
+  notification,
 } from "antd";
 import { Hero, HeroModel, USER_PERMISSION } from "../libtypes/heros.type";
-import { useQuery } from "@tanstack/react-query";
+import { isError, useQuery } from "@tanstack/react-query";
 import { handleGetSingleHero } from "../service/heroApi";
-import useMutationHero from "../components/useMutationHero";
-import {
-  HeroClassInput,
-  MyFormItem,
-  MyFormItemGroup,
-} from "../components/form/HeroCustomFormGroup";
+import { HeroClassInput } from "../components/form/HeroCustomFormGroup";
+import useUpdateMutation from "../components/mutation/useUpdateMutation";
+import { CheckOutlined } from "@ant-design/icons";
 
 const EditHero = () => {
-  const { updateMutation } = useMutationHero();
-
-  //show popup form after submit
-  const [formPopup, setFormPopup] = useState(false);
-  const handleOk = () => {
-    setFormPopup(false);
-  };
-
-  //state of form when submit
-  const [formDisable, setformDisable] = useState<boolean>(false);
-
-  //state of loading button
-  const [loading, setLoading] = useState<boolean>(false);
-  const [disabled, setDisabled] = useState<boolean>(false);
-
-  // state of title modal
-  const [titleModal, setTitleModal] = useState<string>();
-
-  // Get Single Hero From Store
+  const updateMutation = useUpdateMutation();
 
   //get Single Hero by react hook
   const { singleRowHeroSelect, setSingleRowHeroSelect } = useHeroStore();
   const { heroId } = useParams();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<HeroModel>();
 
   const { data: heroData, isLoading } = useQuery({
     queryKey: ["single-hero", heroId],
     queryFn: () => {
-      return heroId ? handleGetSingleHero(heroId) : null;
+      if (!heroId) {
+        return undefined;
+      }
+      if (singleRowHeroSelect?.id === parseInt(heroId)) {
+        return singleRowHeroSelect;
+      }
+      return handleGetSingleHero(heroId);
     },
     onSuccess: (hero) => {
-      if (singleRowHeroSelect) {
-        return singleRowHeroSelect;
-      } else {
-        return hero;
+      if (hero) {
+        setSingleRowHeroSelect(hero);
       }
     },
     onError: (error) => {
-      setTitleModal("Hero Not Found!");
-      setFormPopup(true);
-      setformDisable(true);
-      setDisabled(true);
+      openNotification("Hero Not Found!");
     },
   });
-  form.setFieldsValue(heroData);
+  if (heroData) {
+    form.setFieldsValue(heroData);
+  }
+
+  // notification after update
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotification = (title: string) => {
+    api.open({
+      message: title,
+      placement: "bottomRight",
+    });
+  };
 
   //update hero with call api
-  const updateData = async (value: Hero) => {
-    setformDisable(true);
-    setLoading(true);
+  const updateHero = async (value: Hero) => {
     if (heroId) {
       await updateMutation.mutateAsync({ heroId: heroId, hero_data: value });
+      openNotification("Update Hero Success!");
     }
-
-    setTitleModal("Update Hero Success!");
-    setFormPopup(true);
-    setformDisable(false);
-    setLoading(false);
   };
   return (
     <div>
       <p style={{ width: "100%", fontWeight: "bold", marginBottom: 20 }}>
         Edit Hero
       </p>
-      <Button type="primary">
-        <Link to="/heroes">Back</Link>
-      </Button>
+      <Link to="/heroes">
+        <Button type="primary">Back</Button>
+      </Link>
       {USER_PERMISSION === "write" ? (
         <div>
           <Form
             name="add_hero"
             form={form}
-            disabled={formDisable}
+            disabled={updateMutation.isLoading}
             style={{ marginTop: 30 }}
             labelCol={{ span: 4, md: 6 }}
             wrapperCol={{ span: 18 }}
-            onFinish={updateData}
+            onFinish={updateHero}
           >
             <Row>
               <Col span={24} md={12}>
@@ -134,20 +119,21 @@ const EditHero = () => {
               </Col>
 
               <Col span={24} md={12}>
-                <MyFormItemGroup prefix={["attributes"]}>
-                  <MyFormItem name="strength" label="Strength">
-                    <Slider disabled={disabled} />
-                  </MyFormItem>
-                  <MyFormItem name="dexterity" label="Dexterity">
-                    <Slider disabled={disabled} />
-                  </MyFormItem>
-                  <MyFormItem name="intelligence" label="Intelligence">
-                    <Slider disabled={disabled} />
-                  </MyFormItem>
-                  <MyFormItem name="vitality" label="Vitality">
-                    <Slider disabled={disabled} />
-                  </MyFormItem>
-                </MyFormItemGroup>
+                <Form.Item name={["attributes", "strength"]} label="Strength">
+                  <Slider></Slider>
+                </Form.Item>
+                <Form.Item name={["attributes", "dexterity"]} label="Dexterity">
+                  <Slider></Slider>
+                </Form.Item>
+                <Form.Item
+                  name={["attributes", "intelligence"]}
+                  label="Intelligence"
+                >
+                  <Slider></Slider>
+                </Form.Item>
+                <Form.Item name={["attributes", "vitality"]} label="Vitality">
+                  <Slider></Slider>
+                </Form.Item>
               </Col>
 
               <Col span={24} style={{ textAlign: "center" }}>
@@ -155,7 +141,7 @@ const EditHero = () => {
                   {USER_PERMISSION === "write" ? (
                     <Button
                       type="primary"
-                      loading={loading}
+                      loading={updateMutation.isLoading}
                       style={{ background: "#ffc53d" }}
                       htmlType="submit"
                     >
@@ -168,19 +154,7 @@ const EditHero = () => {
               </Col>
             </Row>
           </Form>
-          <Modal
-            onCancel={handleOk}
-            title={titleModal}
-            open={formPopup}
-            footer={[
-              <Button key="link" type="default">
-                <Link to="/heroes">Go To List Heroes</Link>
-              </Button>,
-              <Button key="close" type="primary" onClick={handleOk}>
-                Close
-              </Button>,
-            ]}
-          ></Modal>
+          {contextHolder}
         </div>
       ) : (
         <h2>You don't have permission to accept this page</h2>
