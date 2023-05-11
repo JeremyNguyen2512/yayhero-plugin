@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "tsc --noEmit && vite build --base=/wp-content/plugins/yayhero/assets/dist/hero/",
+    "build": "tsc --noEmit && vite build --base=/wp-content/plugins/yayheroes/assets/dist/hero/",
     "dev": "vite"
   },
   "dependencies": {

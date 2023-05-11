@@ -1,8 +1,6 @@
 import { HeroDataModel, HeroModel, Hero } from '../libtypes/heros.type';
 import axios from 'axios';
 
-console.log(`${window.appLocalize.api_url}yayhero/v1`);
-
 const heroApi = axios.create({
   baseURL: `${window.appLocalize.api_url}yayhero/v1`,
   headers: { 'X-WP-Nonce': window.appLocalize.hero_nonce },
