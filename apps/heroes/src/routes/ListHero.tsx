@@ -36,23 +36,17 @@ const { Title } = Typography;
 //=======zustand logic
 const ListHero: React.FC = () => {
   const { page, pageSize, setPage, setPageSize } = useHeroCurrentPageStore();
-  const {
-    heroData: listHero,
-    totalPage,
-    isLoading,
-    setListHero,
-  } = useQueryHeroes();
+  const { heroesData, totalPage, isLoading, setListHero } = useQueryHeroes();
   const { deleteMutation, updateLevelMutation } = useMutationHero();
-  const queryClient = useQueryClient();
 
   const [updateLevelLoading, setUpdateLevelLoading] = useState<boolean>(false);
   const [updateLevelDisable, setUpdateLevelDisable] = useState<boolean>(false);
 
   useEffect(() => {
-    if (listHero?.length === 0 && page > 1) {
+    if (heroesData?.length === 0 && page > 1) {
       setPage(page - 1);
     }
-  }, [listHero]);
+  }, [heroesData]);
 
   const handleOnChange = (page: number, pageSize: number) => {
     setPage(page);
@@ -62,7 +56,7 @@ const ListHero: React.FC = () => {
   //code up level heroes new
   // const runDebounce = useCallback(debounce((nextVal)=>handleChange(nextVal), 700), [])
   // const handleUpLevel = (record: DataType) => {
-  //   queryClient.setQueryData(["listHero", page], (oldData) => {
+  //   queryClient.setQueryData(["heroesData", page], (oldData) => {
   //     console.log({ oldData });
   //     const newData = oldData.hero_data?.map((item) => {
   //       if (item.id === record.id) {
@@ -250,7 +244,7 @@ const ListHero: React.FC = () => {
       </Space.Compact>
       <Table
         rowSelection={rowSelection}
-        dataSource={listHero}
+        dataSource={heroesData}
         columns={columns}
         pagination={false}
         loading={isLoading}

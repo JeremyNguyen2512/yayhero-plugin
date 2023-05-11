@@ -1,6 +1,6 @@
 import {useQuery, useQueryClient } from "@tanstack/react-query"
 import { useHeroCurrentPageStore, useHeroStore } from "../store/heroStore"
-import { handleGetHero } from "../service/HeroApi.Service";
+import { handleGetHero } from "../service/heroApi";
 import { useState } from "react";
 
 export default function useQueryHeroes(){
@@ -16,15 +16,15 @@ export default function useQueryHeroes(){
       const { data, isLoading } = useQuery({
         queryKey: ["listHero", page],
         queryFn: async () => await handleGetHero(page, pageSize),
-        staleTime: 300*1000,
+        keepPreviousData: true,
         onSuccess: (data) => {
           queryClient.setQueryData(['listHero', page], data)
           setListHero(data.hero_data);
           setTotalPage(data.total_data)
         },
       });
-      const heroData = data?.hero_data
+      const heroesData = data?.hero_data
 
-    return {heroData, totalPage, isLoading, setListHero}
+    return {heroesData, totalPage, isLoading, setListHero}
 
 }

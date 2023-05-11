@@ -30,7 +30,7 @@ export const HERO_CLASS_LIST= [
 
 export const USER_PERMISSION = window.appLocalize.user_permission
 
-interface Hero {
+export interface Hero {
   name: string;
   class: HeroClass;
   level: number;
@@ -50,7 +50,6 @@ export type HeroAttributes = {
 }
 
 export type HeroModel = Hero & {
-  key: number;
   id: number;
 }
 
@@ -59,26 +58,17 @@ export type HeroClassColors = Record<HeroClass, {
   activeColor: string;
 }>
 
-export type HeroType = Hero
-
 export type  HeroDataModel = {
   hero_data: HeroModel[],
   total_data: number
 }
-
-export const CHECK_NONCE = {
-  headers:{
-    'X-WP-Nonce': window.appLocalize.hero_nonce
-  }
-}
-
 
 declare global {
   interface Window{
     appLocalize :{
       api_url: string,
       hero_nonce:string,
-      user_permission: string
+      user_permission: 'read' | 'write'
     }
   }
 }

@@ -1,7 +1,5 @@
 import { create } from "zustand";
 import { HeroModel } from "../libtypes/heros.type";
-import axios from "axios";
-
 
 interface HeroStore{
   singleRowHeroSelect?: HeroModel,

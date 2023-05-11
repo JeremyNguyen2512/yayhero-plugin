@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useHeroStore } from "../store/heroStore";
 import { Link } from "react-router-dom";
@@ -13,16 +13,15 @@ import {
   Tag,
   Modal,
 } from "antd";
-import { HeroType, USER_PERMISSION } from "../libtypes/heros.type";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { handleGetSingleHero } from "../service/HeroApi.Service";
+import { Hero, HeroModel, USER_PERMISSION } from "../libtypes/heros.type";
+import { useQuery } from "@tanstack/react-query";
+import { handleGetSingleHero } from "../service/heroApi";
 import useMutationHero from "../components/useMutationHero";
 import {
   HeroClassInput,
   MyFormItem,
   MyFormItemGroup,
 } from "../components/form/HeroCustomFormGroup";
-import getHeroDatabyID from "../service/GetHeroDataByID";
 
 const EditHero = () => {
   const { updateMutation } = useMutationHero();
@@ -50,52 +49,29 @@ const EditHero = () => {
   const { heroId } = useParams();
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    if (singleRowHeroSelect?.id && Number(heroId) === singleRowHeroSelect.id) {
-      form.setFieldsValue({
-        name: singleRowHeroSelect?.name,
-        class: singleRowHeroSelect?.class,
-        level: singleRowHeroSelect?.level,
-        attributes: {
-          strength: singleRowHeroSelect?.attributes.strength,
-          dexterity: singleRowHeroSelect?.attributes.dexterity,
-          intelligence: singleRowHeroSelect?.attributes.intelligence,
-          vitality: singleRowHeroSelect?.attributes.vitality,
-        },
-      });
-    }
-  }, [heroId]);
-
-  useQuery({
+  const { data: heroData, isLoading } = useQuery({
     queryKey: ["single-hero", heroId],
     queryFn: () => {
       return heroId ? handleGetSingleHero(heroId) : null;
     },
-    onSuccess: (data) => {
-      if (data.length > 0) {
-        form.setFieldsValue({
-          name: data[0]?.name,
-          class: data[0]?.class,
-          level: data[0]?.level,
-          attributes: {
-            strength: Number(data[0]?.attributes.strength),
-            dexterity: Number(data[0]?.attributes.dexterity),
-            intelligence: Number(data[0]?.attributes.intelligence),
-            vitality: Number(data[0]?.attributes.vitality),
-          },
-        });
-        setformDisable(false);
+    onSuccess: (hero) => {
+      if (singleRowHeroSelect) {
+        return singleRowHeroSelect;
       } else {
-        setTitleModal("Hero Not Found!");
-        setFormPopup(true);
-        setformDisable(true);
-        setDisabled(true);
+        return hero;
       }
     },
+    onError: (error) => {
+      setTitleModal("Hero Not Found!");
+      setFormPopup(true);
+      setformDisable(true);
+      setDisabled(true);
+    },
   });
+  form.setFieldsValue(heroData);
 
   //update hero with call api
-  const updateData = async (value: HeroType) => {
+  const updateData = async (value: Hero) => {
     setformDisable(true);
     setLoading(true);
     if (heroId) {

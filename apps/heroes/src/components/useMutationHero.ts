@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { handleAddHero, handleDeleteHero, handleUpdateHero, handleUpdateLevelHero } from "../service/HeroApi.Service";
+import { handleAddHero, handleDeleteHero, handleUpdateHero, handleUpdateLevelHero } from "../service/heroApi";
 import { HeroDataModel, HeroModel, HeroType } from "../libtypes/heros.type";
 import { useHeroCurrentPageStore } from "../store/heroStore";
 
